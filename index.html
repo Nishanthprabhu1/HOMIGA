@@ -1,533 +1,1434 @@
-<!-- =========================================
-REPLACE THIS ENTIRE HEADER SECTION
-========================================= -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+
+<title>HOMIGA — Korean Luxury AR Dining</title>
+
+<meta name="description"
+content="HOMIGA Korean Luxury Italian Dining with Interactive 3D & AR Experience." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@300;400;500;600&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet" />
+
+<style>
+
+*,
+*::before,
+*::after{
+box-sizing:border-box;
+margin:0;
+padding:0;
+}
+
+:root{
+
+--font-serif:'Noto Sans KR',sans-serif;
+--font-sans:'Poppins',sans-serif;
+--font-display:'Orbitron',sans-serif;
+--font-body:'Poppins',sans-serif;
+
+--bg:#050816;
+--bg2:#0b1220;
+
+--card:rgba(17,24,39,0.92);
+
+--primary:#8b5cf6;
+--primary2:#22d3ee;
+
+--text:#f8fafc;
+--soft:#94a3b8;
+
+--border:rgba(255,255,255,0.08);
+
+--shadow:
+0 10px 40px rgba(0,0,0,0.45);
+
+--glow:
+0 0 20px rgba(139,92,246,0.35),
+0 0 60px rgba(34,211,238,0.15);
+
+}
+
+html{
+scroll-behavior:smooth;
+}
+
+body{
+
+background:
+radial-gradient(circle at top left,
+rgba(139,92,246,0.22),
+transparent 30%),
+
+radial-gradient(circle at bottom right,
+rgba(34,211,238,0.12),
+transparent 30%),
+
+linear-gradient(
+180deg,
+#020617 0%,
+#07101c 50%,
+#030712 100%);
+
+color:var(--text);
+
+min-height:100vh;
+
+font-family:var(--font-sans);
+
+overflow-x:hidden;
+
+}
+
+/* =========================
+HEADER
+========================= */
+
+.site-header{
+
+position:relative;
+
+overflow:hidden;
+
+text-align:center;
+
+padding:
+max(env(safe-area-inset-top),3rem)
+1rem
+3rem;
+
+background:
+linear-gradient(
+180deg,
+rgba(10,15,25,0.96),
+rgba(5,8,22,0.98));
+
+}
+
+.header-kanji{
+
+color:rgba(255,255,255,0.45);
+
+letter-spacing:5px;
+
+margin-bottom:16px;
+
+font-size:12px;
+
+}
+
+.header-title{
+
+font-family:var(--font-display);
+
+font-size:clamp(40px,8vw,90px);
+
+font-weight:700;
+
+letter-spacing:8px;
+
+margin-bottom:10px;
+
+background:
+linear-gradient(
+90deg,
+#ffffff,
+#a855f7,
+#22d3ee,
+#ffffff);
+
+background-size:300%;
+
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+
+animation:shine 8s linear infinite;
+
+}
+
+@keyframes shine{
+
+0%{
+background-position:0%;
+}
+
+100%{
+background-position:300%;
+}
+
+}
+
+.header-title-jp{
+
+font-family:'Noto Sans KR',sans-serif;
+
+font-size:clamp(16px,3vw,28px);
+
+color:rgba(255,255,255,0.72);
+
+letter-spacing:6px;
+
+display:block;
+
+margin-bottom:18px;
+
+}
+
+.header-sub{
+
+color:rgba(255,255,255,0.55);
+
+letter-spacing:3px;
+
+font-size:12px;
+
+margin-bottom:20px;
+
+}
+
+.brush-divider{
+
+width:140px;
+
+height:2px;
+
+margin:20px auto;
+
+background:
+linear-gradient(
+90deg,
+transparent,
+#8b5cf6,
+#22d3ee,
+transparent);
+
+}
+
+.ar-badge{
+
+display:inline-flex;
+
+align-items:center;
+
+gap:8px;
+
+padding:10px 18px;
+
+border-radius:100px;
+
+background:
+rgba(255,255,255,0.04);
+
+border:
+1px solid rgba(255,255,255,0.08);
+
+backdrop-filter:blur(10px);
+
+}
+
+.ar-dot{
+
+width:8px;
+height:8px;
+
+border-radius:50%;
+
+background:#22d3ee;
+
+box-shadow:
+0 0 10px #22d3ee,
+0 0 20px #22d3ee;
+
+animation:pulse 2s infinite;
+
+}
+
+@keyframes pulse{
+
+0%{
+transform:scale(1);
+opacity:1;
+}
+
+50%{
+transform:scale(.7);
+opacity:.4;
+}
+
+100%{
+transform:scale(1);
+opacity:1;
+}
+
+}
+
+#language-picker{
+
+margin-bottom:20px;
+
+}
+
+#lang-select{
+
+background:
+rgba(255,255,255,0.05);
+
+color:white;
+
+border:
+1px solid rgba(255,255,255,0.08);
+
+border-radius:100px;
+
+padding:10px 18px;
+
+outline:none;
+
+}
+
+/* =========================
+TABS
+========================= */
+
+.tabs-wrap{
+
+position:sticky;
+
+top:0;
+
+z-index:100;
+
+background:
+rgba(5,8,22,0.92);
+
+backdrop-filter:blur(20px);
+
+border-bottom:
+1px solid rgba(255,255,255,0.05);
+
+}
+
+.tabs-inner{
+
+display:flex;
+
+gap:12px;
+
+overflow-x:auto;
+
+padding:16px;
+
+justify-content:center;
+
+}
+
+.tabs-inner::-webkit-scrollbar{
+display:none;
+}
+
+.tab-btn{
+
+border:none;
+
+padding:12px 22px;
+
+border-radius:100px;
+
+background:
+rgba(255,255,255,0.03);
+
+color:var(--soft);
+
+transition:.3s;
+
+cursor:pointer;
+
+}
+
+.tab-btn.active{
+
+background:
+linear-gradient(
+135deg,
+var(--primary),
+var(--primary2));
+
+color:white;
+
+box-shadow:var(--glow);
+
+}
+
+/* =========================
+MAIN
+========================= */
+
+.main{
+
+max-width:1300px;
+
+margin:auto;
+
+padding:40px 20px 100px;
+
+}
+
+/* =========================
+SECTION LABEL
+========================= */
+
+.section-label{
+
+color:white;
+
+font-size:14px;
+
+letter-spacing:5px;
+
+margin:45px 0 20px;
+
+text-transform:uppercase;
+
+}
+
+/* =========================
+GRID
+========================= */
+
+.items-grid{
+
+display:grid;
+
+grid-template-columns:
+repeat(auto-fit,minmax(330px,1fr));
+
+gap:24px;
+
+}
+
+/* =========================
+CARD
+========================= */
+
+.menu-card{
+
+background:var(--card);
+
+border:
+1px solid rgba(255,255,255,0.06);
+
+border-radius:28px;
+
+overflow:hidden;
+
+transition:.4s;
+
+backdrop-filter:blur(20px);
+
+box-shadow:var(--shadow);
+
+cursor:pointer;
+
+}
+
+.menu-card:hover{
+
+transform:
+translateY(-8px)
+scale(1.01);
+
+border-color:
+rgba(139,92,246,0.35);
+
+box-shadow:var(--glow);
+
+}
+
+.card-row{
+display:block;
+}
+
+.card-thumb{
+
+position:relative;
+
+height:240px;
+
+overflow:hidden;
+
+}
+
+.card-thumb img{
+
+width:100%;
+height:100%;
+
+object-fit:cover;
+
+transition:1s;
+
+}
+
+.menu-card:hover .card-thumb img{
+
+transform:scale(1.08);
+
+}
+
+.ar-pill{
+
+position:absolute;
+
+top:16px;
+right:16px;
+
+background:
+linear-gradient(
+135deg,
+var(--primary),
+var(--primary2));
+
+color:white;
+
+border-radius:100px;
+
+padding:6px 12px;
+
+font-size:11px;
+
+letter-spacing:1px;
+
+}
+
+.card-body{
+
+padding:24px;
+
+}
+
+.name-row{
+
+margin-bottom:14px;
+
+}
+
+.dish-name{
+
+font-size:26px;
+
+font-weight:600;
+
+color:white;
+
+margin-bottom:4px;
+
+}
+
+.dish-jp{
+
+font-family:'Noto Sans KR',sans-serif;
+
+font-size:13px;
+
+letter-spacing:2px;
+
+color:#67e8f9;
+
+margin-bottom:12px;
+
+}
+
+.dish-desc{
+
+color:var(--soft);
+
+line-height:1.8;
+
+font-size:14px;
+
+margin-bottom:20px;
+
+}
+
+.card-footer{
+
+display:flex;
+
+align-items:center;
+
+justify-content:space-between;
+
+}
+
+.dish-price{
+
+font-size:34px;
+
+font-weight:700;
+
+background:
+linear-gradient(
+135deg,
+white,
+#67e8f9);
+
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+
+}
+
+.ar-btn{
+
+border:none;
+
+border-radius:100px;
+
+padding:14px 24px;
+
+background:
+linear-gradient(
+135deg,
+var(--primary),
+var(--primary2));
+
+color:white;
+
+font-weight:600;
+
+box-shadow:var(--glow);
+
+cursor:pointer;
+
+}
+
+.site-footer{
+
+text-align:center;
+
+padding:50px 20px;
+
+background:
+rgba(255,255,255,0.02);
+
+border-top:
+1px solid rgba(255,255,255,0.05);
+
+color:
+rgba(255,255,255,0.45);
+
+line-height:2;
+
+}
+
+.funzone-btn{
+
+display:inline-flex;
+
+align-items:center;
+
+gap:6px;
+
+background:
+linear-gradient(
+135deg,
+var(--primary),
+var(--primary2));
+
+padding:10px 18px;
+
+border-radius:100px;
+
+text-decoration:none;
+
+color:white;
+
+}
+
+.modal-overlay{
+
+display:none;
+
+position:fixed;
+
+inset:0;
+
+background:
+rgba(0,0,0,0.82);
+
+z-index:9999;
+
+justify-content:center;
+
+align-items:center;
+
+padding:20px;
+
+}
+
+.modal-overlay.open{
+display:flex;
+}
+
+.modal-card{
+
+width:100%;
+
+max-width:520px;
+
+background:#111827;
+
+border-radius:30px;
+
+overflow:hidden;
+
+}
+
+.modal-viewer-wrap{
+
+height:320px;
+
+background:#050816;
+
+}
+
+.modal-body{
+
+padding:25px;
+
+}
+
+.modal-name{
+
+font-size:32px;
+
+margin-bottom:8px;
+
+}
+
+.modal-jp{
+
+font-size:13px;
+
+color:#67e8f9;
+
+margin-bottom:20px;
+
+}
+
+.modal-desc{
+
+line-height:1.8;
+
+color:var(--soft);
+
+margin-bottom:20px;
+
+}
+
+.modal-price{
+
+font-size:36px;
+
+font-weight:700;
+
+}
+
+.modal-close{
+
+position:absolute;
+
+top:20px;
+right:20px;
+
+width:40px;
+height:40px;
+
+border:none;
+
+border-radius:50%;
+
+background:
+rgba(255,255,255,0.08);
+
+color:white;
+
+font-size:20px;
+
+cursor:pointer;
+
+}
+
+@media(max-width:768px){
+
+.header-title{
+letter-spacing:4px;
+}
+
+.card-thumb{
+height:220px;
+}
+
+.dish-name{
+font-size:24px;
+}
+
+}
+
+</style>
+</head>
+
+<body>
 
 <header class="site-header">
-  <div class="seigaiha-bg"></div>
 
-  <div style="position:absolute;top:max(env(safe-area-inset-top),1rem);right:1rem;z-index:20;">
-    <a href="FunZone.html" class="funzone-btn">🎮 FunZone</a>
-  </div>
+<div style="position:absolute;top:max(env(safe-area-inset-top),1rem);right:1rem;z-index:20;">
+<a href="FunZone.html" class="funzone-btn">
+🎮 FunZone
+</a>
+</div>
 
-  <div id="language-picker">
-    <select id="lang-select">
-      <option value="en">English</option>
-      <option value="kr">한국어</option>
-      <option value="it">Italiano</option>
-      <option value="kn">ಕನ್ನಡ</option>
-      <option value="ta">தமிழ்</option>
-      <option value="ml">മലയാളം</option>
-      <option value="te">తెలుగు</option>
-    </select>
-  </div>
+<div id="language-picker">
 
-  <div class="header-mon"></div>
+<select id="lang-select">
 
-  <p class="header-kanji">
-    SEOUL LUXURY ITALIAN DINING
-  </p>
+<option value="en">English</option>
+<option value="kr">한국어</option>
+<option value="it">Italiano</option>
+<option value="kn">ಕನ್ನಡ</option>
+<option value="ta">தமிழ்</option>
+<option value="ml">മലയാളം</option>
+<option value="te">తెలుగు</option>
 
-  <h1 class="header-title">
-    HOMIGA
-  </h1>
+</select>
 
-  <span class="header-title-jp">
-    호미가 이탈리안 다이닝
-  </span>
+</div>
 
-  <div class="brush-divider"></div>
+<p class="header-kanji">
+SEOUL LUXURY ITALIAN DINING
+</p>
 
-  <p class="header-sub" id="ui-sub-tag">
-    Korean Inspired Italian Fine Dining
-  </p>
+<h1 class="header-title">
+HOMIGA
+</h1>
 
-  <span class="ar-badge">
-    <span class="ar-dot"></span>
-    <span id="ui-ar-badge">
-      Interactive 3D & AR Preview
-    </span>
-  </span>
+<span class="header-title-jp">
+호미가 이탈리안 다이닝
+</span>
+
+<div class="brush-divider"></div>
+
+<p class="header-sub" id="ui-sub-tag">
+Korean Inspired Italian Fine Dining
+</p>
+
+<span class="ar-badge">
+
+<span class="ar-dot"></span>
+
+<span id="ui-ar-badge">
+Interactive 3D & AR Preview
+</span>
+
+</span>
 
 </header>
 
+<nav class="tabs-wrap">
 
-<!-- =========================================
-REPLACE THIS ENTIRE :ROOT SECTION
-========================================= -->
+<div class="tabs-inner" id="tabs-inner">
 
-:root {
+<button class="tab-btn active" data-cat="all">
+ALL
+</button>
 
-  --font-serif: 'Noto Serif KR', serif;
-  --font-sans: 'Noto Sans KR', sans-serif;
-  --font-display: 'Orbitron', sans-serif;
-  --font-body: 'Poppins', sans-serif;
+<button class="tab-btn" data-cat="starter">
+STARTERS
+</button>
 
-  --bg-dark: #050816;
-  --bg-card: rgba(17,24,39,0.92);
+<button class="tab-btn" data-cat="main-course">
+MAIN COURSE
+</button>
 
-  --primary: #8b5cf6;
-  --primary2: #22d3ee;
+<button class="tab-btn" data-cat="dessert">
+DESSERTS
+</button>
 
-  --text: #f8fafc;
-  --soft: #94a3b8;
+</div>
 
-  --border: rgba(255,255,255,0.08);
+</nav>
 
-  --shadow:
-  0 10px 40px rgba(0,0,0,0.45);
+<main class="main">
 
-  --glow:
-  0 0 20px rgba(139,92,246,0.35),
-  0 0 50px rgba(34,211,238,0.12);
-}
+<div id="items-container"></div>
 
+</main>
 
-/* =========================================
-REPLACE BODY CSS
-========================================= */
+<div class="modal-overlay" id="modal-overlay">
 
-body {
+<div class="modal-card">
 
-  background:
-  radial-gradient(circle at top left,
-  rgba(139,92,246,0.22),
-  transparent 30%),
+<div class="modal-viewer-wrap">
 
-  radial-gradient(circle at bottom right,
-  rgba(34,211,238,0.15),
-  transparent 30%),
+<button class="modal-close" id="modal-close">
+✕
+</button>
 
-  linear-gradient(
-  180deg,
-  #030712 0%,
-  #07101c 50%,
-  #020617 100%);
+<model-viewer
+id="main-mv"
+ar
+camera-controls
+touch-action="pan-y"
+shadow-intensity="1"
+auto-rotate
+style="width:100%;height:100%;">
+</model-viewer>
 
-  color: var(--text);
+</div>
 
-  min-height: 100vh;
+<div class="modal-body">
 
-  font-family: var(--font-sans);
+<h2 class="modal-name" id="modal-name"></h2>
 
-}
+<p class="modal-jp" id="modal-jp"></p>
 
+<p class="modal-desc" id="modal-desc"></p>
 
-/* =========================================
-REPLACE HEADER CSS
-========================================= */
+<div class="card-footer">
 
-.site-header {
+<div class="modal-price" id="modal-price"></div>
 
-  position: relative;
+<button class="ar-btn" id="modal-ar-btn">
+VIEW IN AR
+</button>
 
-  overflow: hidden;
+</div>
 
-  text-align: center;
+</div>
 
-  padding:
-  max(env(safe-area-inset-top), 3rem)
-  1rem
-  3rem;
+</div>
 
-  background:
-  linear-gradient(
-  180deg,
-  rgba(10,15,25,0.96),
-  rgba(5,8,22,0.98));
+</div>
 
-}
+<footer class="site-footer">
 
-.header-title {
+HOMIGA • 호미가 이탈리안 다이닝<br>
 
-  font-family: var(--font-display);
+Interactive 3D + AR Dining Experience
 
-  font-size: clamp(40px,8vw,90px);
+</footer>
 
-  font-weight: 700;
+<script type="module">
 
-  letter-spacing: 8px;
+import 'https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js';
 
-  margin-bottom: 10px;
+const CSV_URL =
+'https://docs.google.com/spreadsheets/d/e/2PACX-1vTxvqvbnA4XcxM21xt7nOKv6aI1MonMepqeMbrrLxQEPzHH66DdM0yi1eRhcEMFn2fQaM_3scUGfJ_9/pub?output=csv';
 
-  background:
-  linear-gradient(
-  90deg,
-  #ffffff,
-  #a855f7,
-  #22d3ee,
-  #ffffff);
-
-  background-size: 300%;
-
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-
-  animation: shine 8s linear infinite;
-}
-
-@keyframes shine {
-
-  0% {
-    background-position: 0%;
-  }
-
-  100% {
-    background-position: 300%;
-  }
-
-}
-
-.header-title-jp {
-
-  font-family: 'Noto Sans KR', sans-serif;
-
-  font-size: clamp(16px,3vw,28px);
-
-  color: rgba(255,255,255,0.75);
-
-  letter-spacing: 6px;
-
-  margin-bottom: 20px;
-
-  display: block;
-}
-
-.header-sub {
-
-  color: rgba(255,255,255,0.55);
-
-  letter-spacing: 3px;
-
-  font-size: 12px;
-
-  margin-bottom: 20px;
-}
-
-
-/* =========================================
-REPLACE TABS CSS
-========================================= */
-
-.tabs-wrap {
-
-  position: sticky;
-
-  top: 0;
-
-  z-index: 100;
-
-  background:
-  rgba(5,8,22,0.92);
-
-  backdrop-filter: blur(20px);
-
-  border-bottom:
-  1px solid rgba(255,255,255,0.06);
-}
-
-.tab-btn {
-
-  padding: 10px 22px;
-
-  border-radius: 100px;
-
-  border: 1px solid rgba(255,255,255,0.08);
-
-  background:
-  rgba(255,255,255,0.03);
-
-  color: var(--soft);
-
-  font-size: 13px;
-
-  letter-spacing: 1px;
-
-  transition: .3s;
-}
-
-.tab-btn.active {
-
-  background:
-  linear-gradient(
-  135deg,
-  var(--primary),
-  var(--primary2));
-
-  color: white;
-
-  box-shadow: var(--glow);
-}
-
-
-/* =========================================
-REPLACE MENU CARD CSS
-========================================= */
-
-.menu-card {
-
-  background: var(--bg-card);
-
-  border:
-  1px solid rgba(255,255,255,0.06);
-
-  border-radius: 28px;
-
-  overflow: hidden;
-
-  transition: .4s;
-
-  backdrop-filter: blur(20px);
-
-  box-shadow: var(--shadow);
-
-}
-
-.menu-card:hover {
-
-  transform:
-  translateY(-6px)
-  scale(1.01);
-
-  border-color:
-  rgba(139,92,246,0.35);
-
-  box-shadow: var(--glow);
-}
-
-.card-thumb {
-
-  border-radius:
-  24px;
-
-  overflow: hidden;
-
-  border:
-  1px solid rgba(255,255,255,0.05);
-}
-
-.card-thumb img {
-
-  transition: 1s;
-}
-
-.menu-card:hover .card-thumb img {
-
-  transform: scale(1.08);
-}
-
-.ar-pill {
-
-  background:
-  linear-gradient(
-  135deg,
-  var(--primary),
-  var(--primary2));
-
-  color: white;
-
-  border-radius: 100px;
-
-  padding: 5px 10px;
-
-  font-size: 10px;
-
-  letter-spacing: 1px;
-}
-
-.dish-name {
-
-  font-size: 26px;
-
-  font-weight: 600;
-
-  color: white;
-
-  margin-bottom: 6px;
-}
-
-.dish-jp {
-
-  font-family: 'Noto Sans KR', sans-serif;
-
-  color: #67e8f9;
-
-  font-size: 13px;
-
-  letter-spacing: 2px;
-
-  margin-bottom: 10px;
-}
-
-.dish-desc {
-
-  color: var(--soft);
-
-  line-height: 1.8;
-
-  font-size: 14px;
-}
-
-.dish-price {
-
-  font-size: 34px;
-
-  font-weight: 700;
-
-  background:
-  linear-gradient(
-  135deg,
-  white,
-  #67e8f9);
-
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.ar-btn {
-
-  border: none;
-
-  border-radius: 100px;
-
-  padding: 14px 24px;
-
-  background:
-  linear-gradient(
-  135deg,
-  var(--primary),
-  var(--primary2));
-
-  color: white;
-
-  font-weight: 600;
-
-  box-shadow: var(--glow);
-}
-
-
-/* =========================================
-REPLACE SECTION LABEL CSS
-========================================= */
-
-.section-label {
-
-  color: white;
-
-  font-size: 14px;
-
-  letter-spacing: 5px;
-
-  margin: 40px 0 20px;
-
-  text-transform: uppercase;
-}
-
-
-/* =========================================
-REPLACE FOOTER CSS
-========================================= */
-
-.site-footer {
-
-  text-align: center;
-
-  padding: 50px 20px;
-
-  background:
-  rgba(255,255,255,0.02);
-
-  border-top:
-  1px solid rgba(255,255,255,0.05);
-
-  color:
-  rgba(255,255,255,0.45);
-
-  line-height: 2;
-}
-
-
-/* =========================================
-NOW REPLACE THIS ENTIRE I18N OBJECT
-========================================= */
+const ASSETS_BASE = '3d-model';
 
 const I18N = {
 
-  en: {
-    sub:'Korean Inspired Italian Fine Dining',
-    badge:'Interactive 3D & AR Preview',
-    veg:'veg',
-    loading:'Loading...',
-    all:'ALL',
-    starter:'STARTERS',
-    main:'MAIN COURSE',
-    dessert:'DESSERTS'
-  },
+en:{
+sub:'Korean Inspired Italian Fine Dining',
+badge:'Interactive 3D & AR Preview',
+all:'ALL',
+starter:'STARTERS',
+main:'MAIN COURSE',
+dessert:'DESSERTS'
+},
 
-  kr: {
-    sub:'한국 감성 이탈리안 파인 다이닝',
-    badge:'인터랙티브 3D & AR 미리보기',
-    veg:'채식',
-    loading:'로딩중...',
-    all:'전체',
-    starter:'스타터',
-    main:'메인 코스',
-    dessert:'디저트'
-  }
+kr:{
+sub:'한국 감성 이탈리안 파인 다이닝',
+badge:'인터랙티브 3D & AR 미리보기',
+all:'전체',
+starter:'스타터',
+main:'메인 코스',
+dessert:'디저트'
+}
 
 };
-
-
-/* =========================================
-REPLACE THIS ENTIRE CAT_LABELS
-========================================= */
 
 const CAT_LABELS = {
 
-  all: {
-    en:'ALL',
-    kr:'전체'
-  },
+all:{
+en:'ALL',
+kr:'전체'
+},
 
-  starter: {
-    en:'STARTERS',
-    kr:'스타터'
-  },
+starter:{
+en:'STARTERS',
+kr:'스타터'
+},
+  dessert:{
+en:'DESSERTS',
+kr:'디저트'
+},
 
-  dessert: {
-    en:'DESSERTS',
-    kr:'디저트'
-  },
-
-  'main-course': {
-    en:'MAIN COURSE',
-    kr:'메인 코스'
-  }
+'main-course':{
+en:'MAIN COURSE',
+kr:'메인 코스'
+}
 
 };
 
+const LOCAL_ASSETS = {
 
-/* =========================================
-NOW REPLACE THIS INSIDE rowToDish()
-========================================= */
+'almond-crusted-crispy':{
+folder:'Almond-Crusted-Crispy',
+file:'Almond-Crusted-Crispy'
+},
 
-const name = row[`name${sfx}`] || row['name'] || '';
-const nameKr = row['name_kr'] || '';
+'mango-petal-tower':{
+folder:'Mango-Petal-Tower',
+file:'Mango-Petal-Tower'
+},
 
+'cheesy_quiche':{
+folder:'Cheesy_quiche',
+file:'Cheesy_quiche'
+}
 
-/* =========================================
-AND INSIDE return { } ADD THIS
-========================================= */
+};
+
+let currentLang = 'en';
+let activeCategory = 'all';
+let allDishes = [];
+
+/* =========================
+CSV PARSER
+========================= */
+
+function splitCSVLine(line){
+
+const result = [];
+
+let current = '';
+
+let inQuotes = false;
+
+for(let i = 0; i < line.length; i++){
+
+const char = line[i];
+
+if(char === '"'){
+inQuotes = !inQuotes;
+continue;
+}
+
+if(char === ',' && !inQuotes){
+result.push(current);
+current = '';
+continue;
+}
+
+current += char;
+
+}
+
+result.push(current);
+
+return result;
+
+}
+
+function parseCSV(text){
+
+const lines = text.trim().split('\n');
+
+const headers =
+splitCSVLine(lines[0]).map(h => h.trim());
+
+return lines.slice(1).map(line => {
+
+const values = splitCSVLine(line);
+
+const obj = {};
+
+headers.forEach((h,i)=>{
+obj[h] = values[i] || '';
+});
+
+return obj;
+
+});
+
+}
+
+/* =========================
+HELPERS
+========================= */
+
+function normalizeKey(str){
+
+return str
+.toLowerCase()
+.replace(/\s+/g,'-')
+.trim();
+
+}
+
+function getAssets(name){
+
+const key = normalizeKey(name);
+
+const asset = LOCAL_ASSETS[key];
+
+if(!asset){
+
+return {
+glb:'',
+poster:'',
+usdz:''
+};
+
+}
+
+const base =
+`${ASSETS_BASE}/${asset.folder}/${asset.file}`;
+
+return {
+
+glb:`${base}.glb`,
+poster:`${base}.png`,
+usdz:`${base}.usdz`
+
+};
+
+}
+
+/* =========================
+ROW TO DISH
+========================= */
+
+function rowToDish(row){
+
+const name =
+row['name'] || '';
+
+const nameKr =
+row['name_kr'] || '';
+
+const assets =
+getAssets(name);
+
+return {
+
+id:row['id'] || '',
+
+name,
 
 nameKr,
 
+description:
+row['description'] || '',
 
-/* =========================================
-NOW REPLACE THIS INSIDE cardHTML()
-========================================= */
+category:
+(row['category'] || 'other')
+.toLowerCase(),
+
+price:
+parseInt(row['price'] || '0'),
+
+available:
+row['available'] === 'TRUE',
+
+glb:
+assets.glb,
+
+poster:
+assets.poster,
+
+usdz:
+assets.usdz
+
+};
+
+}
+
+/* =========================
+CARD HTML
+========================= */
+
+function cardHTML(dish){
+
+return `
+
+<div class="menu-card"
+onclick="openModal('${dish.id}')">
+
+<div class="card-thumb">
+
+<img src="${dish.poster}"
+alt="${dish.name}" />
+
+<div class="ar-pill">
+AR READY
+</div>
+
+</div>
+
+<div class="card-body">
 
 <div class="name-row">
-  <div>
-    <div class="dish-name">${d.name}</div>
-    <div class="dish-jp">${d.nameKr || ''}</div>
-  </div>
+
+<div class="dish-name">
+${dish.name}
 </div>
+
+<div class="dish-jp">
+${dish.nameKr}
+</div>
+
+</div>
+
+<p class="dish-desc">
+${dish.description}
+</p>
+
+<div class="card-footer">
+
+<div class="dish-price">
+₹${dish.price}
+</div>
+
+<button class="ar-btn">
+VIEW AR
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+`;
+
+}
+
+/* =========================
+RENDER ITEMS
+========================= */
+
+function renderItems(){
+
+const container =
+document.getElementById('items-container');
+
+let filtered = [];
+
+if(activeCategory === 'all'){
+
+filtered = allDishes;
+
+}else{
+
+filtered = allDishes.filter(
+d => d.category === activeCategory
+);
+
+}
+
+container.innerHTML = `
+
+<div class="items-grid">
+
+${filtered.map(cardHTML).join('')}
+
+</div>
+
+`;
+
+}
+
+/* =========================
+RENDER TABS
+========================= */
+
+function renderTabs(){
+
+const tabs =
+document.querySelectorAll('.tab-btn');
+
+tabs.forEach(tab=>{
+
+tab.classList.remove('active');
+
+if(tab.dataset.cat === activeCategory){
+tab.classList.add('active');
+}
+
+tab.onclick = ()=>{
+
+activeCategory =
+tab.dataset.cat;
+
+renderTabs();
+
+renderItems();
+
+};
+
+});
+
+}
+
+/* =========================
+MODAL
+========================= */
+
+const modal =
+document.getElementById('modal-overlay');
+
+const mv =
+document.getElementById('main-mv');
+
+function openModal(id){
+
+const dish =
+allDishes.find(d => d.id === id);
+
+if(!dish) return;
+
+document.getElementById('modal-name')
+.textContent = dish.name;
+
+document.getElementById('modal-jp')
+.textContent = dish.nameKr;
+
+document.getElementById('modal-desc')
+.textContent = dish.description;
+
+document.getElementById('modal-price')
+.textContent = `₹${dish.price}`;
+
+mv.src = dish.glb;
+
+if(dish.usdz){
+mv.setAttribute('ios-src', dish.usdz);
+}
+
+modal.classList.add('open');
+
+document.body.style.overflow = 'hidden';
+
+}
+
+function closeModal(){
+
+modal.classList.remove('open');
+
+document.body.style.overflow = '';
+
+mv.removeAttribute('src');
+
+}
+
+document
+.getElementById('modal-close')
+.onclick = closeModal;
+
+modal.onclick = e => {
+
+if(e.target === modal){
+closeModal();
+}
+
+};
+
+/* =========================
+LANGUAGE SWITCH
+========================= */
+
+document
+.getElementById('lang-select')
+.addEventListener('change', e => {
+
+currentLang = e.target.value;
+
+const t =
+I18N[currentLang] || I18N.en;
+
+document
+.getElementById('ui-sub-tag')
+.textContent = t.sub;
+
+document
+.getElementById('ui-ar-badge')
+.textContent = t.badge;
+
+document.querySelector(
+'[data-cat="all"]'
+).textContent = t.all;
+
+document.querySelector(
+'[data-cat="starter"]'
+).textContent = t.starter;
+
+document.querySelector(
+'[data-cat="main-course"]'
+).textContent = t.main;
+
+document.querySelector(
+'[data-cat="dessert"]'
+).textContent = t.dessert;
+
+});
+
+/* =========================
+LOAD MENU
+========================= */
+
+async function loadMenu(){
+
+try{
+
+const res =
+await fetch(CSV_URL);
+
+const text =
+await res.text();
+
+const rows =
+parseCSV(text);
+
+allDishes =
+rows.map(rowToDish)
+.filter(d => d.name);
+
+renderTabs();
+
+renderItems();
+
+}catch(err){
+
+console.error(err);
+
+document
+.getElementById('items-container')
+.innerHTML = `
+
+<div style="
+text-align:center;
+padding:100px 20px;
+color:white;">
+
+Failed to load menu
+
+</div>
+
+`;
+
+}
+
+}
+
+loadMenu();
+
+</script>
+
+</body>
+</html>
