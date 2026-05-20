@@ -1,0 +1,944 @@
+<!-- =========================================
+HOMIGA — KOREAN LUXURY AR DINING UI
+FULL UPDATED UI REPLACEMENT
+========================================= -->
+
+<!-- REPLACE ONLY THE <STYLE> SECTION -->
+<!-- KEEP YOUR EXISTING SCRIPT + AR SYSTEM -->
+
+<style>
+
+*,
+*::before,
+*::after{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+:root{
+
+  --bg:#050816;
+  --bg2:#0b1220;
+
+  --card:rgba(18,25,38,0.82);
+
+  --primary:#8b5cf6;
+  --primary2:#22d3ee;
+
+  --text:#f8fafc;
+  --soft:#94a3b8;
+
+  --border:rgba(255,255,255,0.08);
+
+  --shadow:
+  0 10px 40px rgba(0,0,0,0.45);
+
+  --glow:
+  0 0 20px rgba(139,92,246,0.45),
+  0 0 40px rgba(34,211,238,0.15);
+
+  --radius:28px;
+
+  --font-main:'Poppins',sans-serif;
+  --font-kr:'Noto Sans KR',sans-serif;
+  --font-display:'Orbitron',sans-serif;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+
+  background:
+  radial-gradient(circle at top left,
+  rgba(139,92,246,0.22),
+  transparent 30%),
+
+  radial-gradient(circle at bottom right,
+  rgba(34,211,238,0.15),
+  transparent 30%),
+
+  linear-gradient(
+  180deg,
+  #030712 0%,
+  #07101c 50%,
+  #020617 100%);
+
+  color:var(--text);
+
+  min-height:100vh;
+
+  font-family:var(--font-main);
+
+  overflow-x:hidden;
+}
+
+/* =========================
+HEADER
+========================= */
+
+.site-header{
+
+  position:relative;
+
+  overflow:hidden;
+
+  text-align:center;
+
+  padding:
+  max(env(safe-area-inset-top),70px)
+  20px
+  50px;
+
+}
+
+.site-header::before{
+
+  content:'';
+
+  position:absolute;
+  inset:0;
+
+  background:
+  radial-gradient(circle at center,
+  rgba(139,92,246,0.18),
+  transparent 55%);
+
+  filter:blur(80px);
+
+  pointer-events:none;
+}
+
+.header-mon{
+  display:none;
+}
+
+.header-kanji{
+
+  font-size:12px;
+
+  letter-spacing:6px;
+
+  color:rgba(255,255,255,0.45);
+
+  margin-bottom:20px;
+
+  text-transform:uppercase;
+}
+
+.header-title{
+
+  font-family:var(--font-display);
+
+  font-size:clamp(42px,10vw,90px);
+
+  font-weight:700;
+
+  letter-spacing:8px;
+
+  margin-bottom:10px;
+
+  background:
+  linear-gradient(
+  90deg,
+  #ffffff,
+  #a855f7,
+  #22d3ee,
+  #ffffff);
+
+  background-size:300%;
+
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+
+  animation:shine 8s linear infinite;
+}
+
+@keyframes shine{
+  0%{background-position:0%;}
+  100%{background-position:300%;}
+}
+
+.header-title::after{
+
+  content:'호미가 이탈리안 다이닝';
+
+  display:block;
+
+  margin-top:16px;
+
+  font-family:var(--font-kr);
+
+  font-size:clamp(16px,3vw,28px);
+
+  font-weight:400;
+
+  letter-spacing:6px;
+
+  color:rgba(255,255,255,0.75);
+
+}
+
+.brush-divider{
+
+  width:120px;
+  height:2px;
+
+  margin:25px auto;
+
+  background:
+  linear-gradient(
+  90deg,
+  transparent,
+  var(--primary),
+  var(--primary2),
+  transparent);
+
+  border-radius:100px;
+}
+
+.header-sub{
+
+  font-size:13px;
+
+  letter-spacing:3px;
+
+  text-transform:uppercase;
+
+  color:rgba(255,255,255,0.5);
+
+  margin-bottom:20px;
+}
+
+.ar-badge{
+
+  display:inline-flex;
+
+  align-items:center;
+
+  gap:10px;
+
+  padding:12px 22px;
+
+  border-radius:100px;
+
+  background:
+  rgba(255,255,255,0.05);
+
+  border:1px solid rgba(255,255,255,0.08);
+
+  backdrop-filter:blur(20px);
+
+  color:white;
+
+  box-shadow:var(--glow);
+
+  font-size:12px;
+
+  letter-spacing:1px;
+}
+
+.ar-dot{
+
+  width:10px;
+  height:10px;
+
+  border-radius:50%;
+
+  background:var(--primary2);
+
+  box-shadow:
+  0 0 10px var(--primary2),
+  0 0 20px var(--primary2);
+
+  animation:pulse 2s infinite;
+}
+
+@keyframes pulse{
+
+  0%{
+    transform:scale(1);
+    opacity:1;
+  }
+
+  50%{
+    transform:scale(.7);
+    opacity:.4;
+  }
+
+  100%{
+    transform:scale(1);
+    opacity:1;
+  }
+}
+
+/* =========================
+LANGUAGE PICKER
+========================= */
+
+#lang-select{
+
+  background:
+  rgba(255,255,255,0.05);
+
+  color:white;
+
+  border:1px solid rgba(255,255,255,0.08);
+
+  border-radius:100px;
+
+  padding:12px 18px;
+
+  backdrop-filter:blur(20px);
+
+  outline:none;
+
+  font-size:13px;
+}
+
+/* =========================
+TABS
+========================= */
+
+.tabs-wrap{
+
+  position:sticky;
+
+  top:0;
+
+  z-index:100;
+
+  backdrop-filter:blur(30px);
+
+  background:
+  rgba(3,7,18,0.75);
+
+  border-top:
+  1px solid rgba(255,255,255,0.04);
+
+  border-bottom:
+  1px solid rgba(255,255,255,0.04);
+}
+
+.tabs-inner{
+
+  display:flex;
+
+  gap:14px;
+
+  overflow-x:auto;
+
+  scrollbar-width:none;
+
+  padding:16px;
+
+  justify-content:center;
+}
+
+.tabs-inner::-webkit-scrollbar{
+  display:none;
+}
+
+.tab-btn{
+
+  border:none;
+
+  padding:12px 24px;
+
+  border-radius:100px;
+
+  background:
+  rgba(255,255,255,0.05);
+
+  color:var(--soft);
+
+  cursor:pointer;
+
+  transition:.3s;
+
+  border:1px solid transparent;
+
+  font-size:13px;
+
+  letter-spacing:1px;
+}
+
+.tab-btn:hover{
+
+  transform:translateY(-2px);
+
+  border-color:
+  rgba(139,92,246,0.4);
+}
+
+.tab-btn.active{
+
+  background:
+  linear-gradient(
+  135deg,
+  var(--primary),
+  var(--primary2));
+
+  color:white;
+
+  box-shadow:var(--glow);
+}
+
+/* =========================
+MAIN
+========================= */
+
+.main{
+
+  max-width:1300px;
+
+  margin:auto;
+
+  padding:40px 20px 100px;
+}
+
+/* =========================
+SECTION TITLE
+========================= */
+
+.section-label{
+
+  margin:45px 0 25px;
+
+  font-size:14px;
+
+  font-weight:600;
+
+  letter-spacing:4px;
+
+  color:white;
+
+  text-transform:uppercase;
+
+  display:flex;
+
+  align-items:center;
+
+  gap:20px;
+}
+
+.section-label span{
+
+  flex:1;
+
+  height:1px;
+
+  background:
+  linear-gradient(
+  90deg,
+  transparent,
+  rgba(139,92,246,0.5),
+  transparent);
+}
+
+/* =========================
+GRID
+========================= */
+
+.items-grid{
+
+  display:grid;
+
+  grid-template-columns:
+  repeat(auto-fit,minmax(330px,1fr));
+
+  gap:24px;
+}
+
+/* =========================
+CARD
+========================= */
+
+.menu-card{
+
+  position:relative;
+
+  overflow:hidden;
+
+  border-radius:var(--radius);
+
+  background:var(--card);
+
+  border:1px solid var(--border);
+
+  backdrop-filter:blur(24px);
+
+  transition:.45s;
+
+  box-shadow:var(--shadow);
+}
+
+.menu-card:hover{
+
+  transform:
+  translateY(-8px)
+  scale(1.02);
+
+  border-color:
+  rgba(139,92,246,0.45);
+
+  box-shadow:var(--glow);
+}
+
+.card-row{
+  display:block;
+}
+
+.card-thumb{
+
+  width:100%;
+
+  height:240px;
+
+  position:relative;
+
+  overflow:hidden;
+
+  border-radius:
+  var(--radius)
+  var(--radius)
+  0
+  0;
+}
+
+.card-thumb img{
+
+  width:100%;
+  height:100%;
+
+  object-fit:cover;
+
+  transition:1s;
+}
+
+.menu-card:hover .card-thumb img{
+  transform:scale(1.1);
+}
+
+.ar-pill{
+
+  position:absolute;
+
+  top:18px;
+  right:18px;
+
+  padding:10px 18px;
+
+  border-radius:100px;
+
+  background:
+  linear-gradient(
+  135deg,
+  var(--primary),
+  var(--primary2));
+
+  color:white;
+
+  font-size:11px;
+
+  font-weight:600;
+
+  letter-spacing:1px;
+
+  box-shadow:var(--glow);
+}
+
+.card-body{
+
+  padding:26px;
+}
+
+.name-row{
+
+  display:block;
+
+  margin-bottom:12px;
+}
+
+.dish-name{
+
+  font-size:28px;
+
+  font-weight:600;
+
+  margin-bottom:6px;
+
+  color:white;
+}
+
+.dish-name::after{
+
+  content:'한국 셰프 스페셜';
+
+  display:block;
+
+  margin-top:8px;
+
+  font-family:var(--font-kr);
+
+  font-size:13px;
+
+  letter-spacing:2px;
+
+  color:var(--primary2);
+}
+
+.dish-desc{
+
+  font-size:14px;
+
+  line-height:1.9;
+
+  color:var(--soft);
+
+  margin-bottom:24px;
+}
+
+.tags-row{
+
+  display:flex;
+
+  gap:8px;
+
+  flex-wrap:wrap;
+
+  margin-bottom:20px;
+}
+
+.tag{
+
+  padding:8px 14px;
+
+  border-radius:100px;
+
+  background:
+  rgba(255,255,255,0.05);
+
+  color:white;
+
+  font-size:11px;
+
+  border:1px solid rgba(255,255,255,0.06);
+}
+
+.card-footer{
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  gap:20px;
+}
+
+.dish-price{
+
+  font-size:34px;
+
+  font-weight:700;
+
+  background:
+  linear-gradient(
+  135deg,
+  #ffffff,
+  var(--primary2));
+
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+.price-sym{
+  font-size:15px;
+}
+
+.ar-btn{
+
+  border:none;
+
+  padding:14px 24px;
+
+  border-radius:100px;
+
+  background:
+  linear-gradient(
+  135deg,
+  var(--primary),
+  var(--primary2));
+
+  color:white;
+
+  font-weight:600;
+
+  cursor:pointer;
+
+  transition:.3s;
+
+  box-shadow:var(--glow);
+}
+
+.ar-btn:hover{
+
+  transform:scale(1.05);
+}
+
+/* =========================
+MODAL
+========================= */
+
+.modal-overlay{
+
+  background:
+  rgba(0,0,0,0.82);
+
+  backdrop-filter:blur(14px);
+}
+
+.modal-card{
+
+  background:
+  linear-gradient(
+  180deg,
+  #0f172a 0%,
+  #0b1220 100%);
+
+  border-radius:30px;
+
+  border:1px solid rgba(255,255,255,0.08);
+
+  overflow:hidden;
+
+  color:white;
+}
+
+.modal-viewer-wrap{
+
+  background:
+  linear-gradient(
+  180deg,
+  #111827,
+  #020617);
+}
+
+.modal-body{
+
+  padding:30px;
+}
+
+.modal-name{
+
+  font-size:34px;
+
+  margin-bottom:8px;
+
+  color:white;
+}
+
+.modal-jp{
+
+  font-family:var(--font-kr);
+
+  font-size:14px;
+
+  letter-spacing:3px;
+
+  color:var(--primary2);
+
+  margin-bottom:20px;
+}
+
+.modal-desc{
+
+  background:
+  rgba(255,255,255,0.04);
+
+  border-left:
+  3px solid var(--primary);
+
+  border-radius:16px;
+
+  padding:20px;
+
+  line-height:1.9;
+
+  color:var(--soft);
+}
+
+.modal-price{
+
+  font-size:38px;
+
+  font-weight:700;
+
+  color:white;
+}
+
+.modal-close{
+
+  background:
+  rgba(255,255,255,0.08);
+
+  border:
+  1px solid rgba(255,255,255,0.08);
+
+  border-radius:50%;
+
+  color:white;
+}
+
+.modal-ar-launch-btn{
+
+  border:none;
+
+  border-radius:100px;
+
+  background:
+  linear-gradient(
+  135deg,
+  var(--primary),
+  var(--primary2));
+
+  color:white;
+
+  box-shadow:var(--glow);
+}
+
+/* =========================
+FOOTER
+========================= */
+
+.site-footer{
+
+  text-align:center;
+
+  padding:50px 20px;
+
+  color:rgba(255,255,255,0.5);
+
+  line-height:2;
+
+  border-top:
+  1px solid rgba(255,255,255,0.04);
+
+  background:
+  rgba(255,255,255,0.02);
+}
+
+.site-footer::before{
+
+  content:'HOMIGA • 호미가';
+
+  display:block;
+
+  margin-bottom:15px;
+
+  font-size:20px;
+
+  font-family:var(--font-display);
+
+  color:white;
+
+  letter-spacing:4px;
+}
+
+/* =========================
+FUNZONE BUTTON
+========================= */
+
+.funzone-btn{
+
+  background:
+  linear-gradient(
+  135deg,
+  var(--primary),
+  var(--primary2));
+
+  border:none;
+
+  border-radius:100px;
+
+  padding:12px 20px;
+
+  color:white;
+
+  text-decoration:none;
+
+  box-shadow:var(--glow);
+}
+
+/* =========================
+MOBILE
+========================= */
+
+@media(max-width:768px){
+
+  .header-title{
+    letter-spacing:4px;
+  }
+
+  .card-thumb{
+    height:220px;
+  }
+
+  .dish-name{
+    font-size:24px;
+  }
+
+  .modal-name{
+    font-size:28px;
+  }
+
+}
+
+</style>
+
+<!-- =========================================
+NOW REPLACE THIS HEADER SECTION ONLY
+========================================= -->
+
+<header class="site-header">
+
+  <div style="position:absolute;top:max(env(safe-area-inset-top),1rem);right:1rem;z-index:20;">
+    <a href="FunZone.html" class="funzone-btn">🎮 FunZone</a>
+  </div>
+
+  <div id="language-picker">
+    <select id="lang-select">
+      <option value="en">English</option>
+      <option value="it">Italiano</option>
+      <option value="kn">ಕನ್ನಡ</option>
+      <option value="ta">தமிழ்</option>
+      <option value="ml">മലയാളം</option>
+      <option value="te">తెలుగు</option>
+    </select>
+  </div>
+
+  <p class="header-kanji">
+    SEOUL LUXURY AR DINING
+  </p>
+
+  <h1 class="header-title">
+    HOMIGA
+  </h1>
+
+  <div class="brush-divider"></div>
+
+  <p class="header-sub" id="ui-sub-tag">
+    Korean Inspired Italian Fine Dining Experience
+  </p>
+
+  <span class="ar-badge">
+    <span class="ar-dot"></span>
+    <span id="ui-ar-badge">
+      Interactive 3D & AR Preview
+    </span>
+  </span>
+
+</header>
