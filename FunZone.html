@@ -137,6 +137,20 @@
     </div>
 
     <a href="index.html" class="back-link">Return to Menu</a>
+      document.addEventListener("contextmenu", e => { e.preventDefault(); });
+document.addEventListener("keydown", e => {
+  if (
+    e.key === "F12" ||
+    (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J" || e.key === "C")) ||
+    (e.ctrlKey && e.key === "u")
+  ) {
+    e.preventDefault();
+  }
+});
+
+
+
+init();
 
 </body>
 </html>
