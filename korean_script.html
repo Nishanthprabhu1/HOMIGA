@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>Korean Language Guide</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:wght@300;400;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+  --ink:#2b1b12;
+  --red:#c62828;
+  --gold:#d4a762;
+  --olive:#607d3b;
+  --cream:#fffaf3;
+  --cream-2:#f7efe3;
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  font-family:'Cormorant Garamond', serif;
+  background:
+    linear-gradient(rgba(255,250,243,0.94), rgba(255,250,243,0.96)),
+    url('https://images.unsplash.com/photo-1516483638261-f4dbaf036963?q=80&w=1600&auto=format&fit=crop');
+
+  background-size:cover;
+  background-attachment:fixed;
+  color:var(--ink);
+  min-height:100vh;
+}
+
+.page{
+  max-width:1100px;
+  margin:auto;
+  padding:2rem;
+  background:rgba(255,250,243,0.92);
+  backdrop-filter:blur(5px);
+  min-height:100vh;
+  box-shadow:0 0 60px rgba(0,0,0,0.15);
+}
+
+.hero{
+  padding:3rem 0 2rem;
+  border-bottom:1px solid rgba(0,0,0,0.1);
+  margin-bottom:2rem;
+}
+
+.hero-top{
+  display:flex;
+  justify-content:space-between;
+  gap:2rem;
+  align-items:flex-end;
+}
+
+.hero h1{
+  font-family:'Cinzel', serif;
+  font-size:clamp(2.5rem,6vw,5rem);
+  line-height:1;
+  color:var(--red);
+}
+
+.hero h1 em{
+  display:block;
+  color:var(--olive);
+  font-style:normal;
+  font-size:0.8em;
+  margin-top:0.4rem;
+}
+
+.hero-sub{
+  margin-top:1rem;
+  font-size:1rem;
+  color:rgba(0,0,0,0.6);
+  font-style:italic;
+}
+
+.badge{
+  text-align:right;
+}
+
+.badge-count{
+  font-size:4rem;
+  color:var(--red);
+  font-weight:700;
+}
+
+.badge-label{
+  font-size:0.8rem;
+  letter-spacing:0.25em;
+  text-transform:uppercase;
+  color:rgba(0,0,0,0.4);
+}
+
+.tip{
+  background:linear-gradient(135deg,#fffdf7,#fff4de);
+  border-left:4px solid var(--gold);
+  padding:1rem 1.5rem;
+  margin-bottom:2rem;
+  line-height:1.7;
+  font-style:italic;
+  color:rgba(0,0,0,0.65);
+}
+
+.filter-bar{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-bottom:1rem;
+}
+
+.cat-btn{
+  border:none;
+  background:white;
+  border:1px solid rgba(0,0,0,0.1);
+  padding:0.7rem 1.2rem;
+  border-radius:999px;
+  cursor:pointer;
+  transition:0.2s;
+  font-family:'Cinzel', serif;
+  font-size:0.8rem;
+}
+
+.cat-btn:hover,
+.cat-btn.active{
+  background:var(--red);
+  color:white;
+}
+
+.phrase-count{
+  margin-bottom:1rem;
+  color:rgba(0,0,0,0.45);
+  font-style:italic;
+}
+
+.table-wrap{
+  border:1px solid rgba(0,0,0,0.1);
+  overflow:hidden;
+  border-radius:12px;
+  background:white;
+}
+
+.col-head{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  background:var(--ink);
+  color:white;
+}
+
+.ch{
+  padding:1rem;
+  font-family:'Cinzel', serif;
+  font-size:0.75rem;
+  letter-spacing:0.2em;
+}
+
+.word-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  border-bottom:1px solid rgba(0,0,0,0.06);
+}
+
+.word-row:hover{
+  background:#fffaf2;
+}
+
+.col-en{
+  padding:1.2rem;
+  border-right:1px solid rgba(0,0,0,0.06);
+}
+
+.en-phrase{
+  display:block;
+  font-size:1.4rem;
+  font-weight:700;
+}
+
+.en-ctx{
+  color:rgba(0,0,0,0.45);
+  font-style:italic;
+  margin-top:4px;
+}
+
+.col-kr{
+  position:relative;
+  padding:1.2rem 4rem 1.2rem 1.2rem;
+}
+
+.kr-rom{
+  display:block;
+  font-size:1.5rem;
+  color:var(--red);
+  font-weight:700;
+}
+
+.kr-main{
+  display:block;
+  margin-top:4px;
+  color:rgba(0,0,0,0.7);
+  font-size:1.2rem;
+  font-family:'Noto Sans KR', sans-serif;
+}
+
+.speak-btn{
+  position:absolute;
+  top:50%;
+  right:1rem;
+  transform:translateY(-50%);
+  width:42px;
+  height:42px;
+  border:none;
+  border-radius:50%;
+  cursor:pointer;
+  background:rgba(198,40,40,0.1);
+  color:var(--red);
+  transition:0.2s;
+  font-size:1rem;
+}
+
+.speak-btn:hover{
+  background:var(--red);
+  color:white;
+}
+
+.group-head{
+  background:var(--cream-2);
+  padding:0.8rem 1rem;
+  font-family:'Cinzel', serif;
+  letter-spacing:0.15em;
+  font-size:0.75rem;
+  color:rgba(0,0,0,0.6);
+}
+
+.footer{
+  text-align:center;
+  margin-top:2rem;
+  padding-top:2rem;
+  color:rgba(0,0,0,0.35);
+  font-style:italic;
+}
+
+@media(max-width:700px){
+
+  .hero-top{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .word-row,
+  .col-head{
+    grid-template-columns:1fr;
+  }
+
+  .col-en{
+    border-right:none;
+    border-bottom:1px solid rgba(0,0,0,0.06);
+  }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="page">
+
+<div class="hero">
+
+<div class="hero-top">
+
+<div>
+
+<h1>
+Korean
+<em>Language Guide</em>
+</h1>
+
+<p class="hero-sub">
+Learn useful Korean phrases for restaurants, travel & daily conversation 🇰🇷
+</p>
+
+</div>
+
+<div class="badge">
+<div class="badge-count" id="phrase-total"></div>
+<div class="badge-label">Phrases</div>
+</div>
+
+</div>
+</div>
+
+<div class="tip">
+🔊 Tap the speaker button to hear authentic Korean pronunciation.
+Practice and speak like a local in Korea!
+</div>
+
+<div class="filter-bar" id="filter-bar"></div>
+
+<div class="phrase-count" id="phrase-count"></div>
+
+<div class="table-wrap">
+
+<div class="col-head">
+<div class="ch">English Phrase</div>
+<div class="ch">Korean · Pronunciation</div>
+</div>
+
+<div id="list"></div>
+
+</div>
+
+<div class="footer">
+Korean Restaurant & Travel Phrase Guide 🇰🇷
+</div>
+
+</div>
+
+<script>
+
+const ALL = [
+
+{
+en:"Good morning",
+ctx:"morning greeting",
+cat:"greet",
+kr:"좋은 아침입니다",
+kr_r:"jo-eun a-chim-im-ni-da"
+},
+
+{
+en:"Hello",
+ctx:"general greeting",
+cat:"greet",
+kr:"안녕하세요",
+kr_r:"an-nyeong-ha-se-yo"
+},
+
+{
+en:"Thank you",
+ctx:"general thanks",
+cat:"thanks",
+kr:"감사합니다",
+kr_r:"gam-sa-ham-ni-da"
+},
+
+{
+en:"Please",
+ctx:"polite request",
+cat:"polite",
+kr:"부탁합니다",
+kr_r:"bu-tak-ham-ni-da"
+},
+
+{
+en:"Sorry",
+ctx:"apologizing",
+cat:"polite",
+kr:"죄송합니다",
+kr_r:"joe-song-ham-ni-da"
+},
+
+{
+en:"The bill please",
+ctx:"asking to pay",
+cat:"restaurant",
+kr:"계산서 주세요",
+kr_r:"gye-san-seo ju-se-yo"
+},
+
+{
+en:"Water please",
+ctx:"ordering water",
+cat:"restaurant",
+kr:"물 주세요",
+kr_r:"mul ju-se-yo"
+},
+
+{
+en:"It's delicious!",
+ctx:"complimenting food",
+cat:"restaurant",
+kr:"맛있어요!",
+kr_r:"ma-sit-seo-yo"
+},
+
+{
+en:"Where is the bathroom?",
+ctx:"asking directions",
+cat:"travel",
+kr:"화장실이 어디에 있나요?",
+kr_r:"hwa-jang-sil-i eo-di-e it-na-yo"
+},
+
+{
+en:"How much is this?",
+ctx:"checking price",
+cat:"travel",
+kr:"이거 얼마예요?",
+kr_r:"i-geo eol-ma-ye-yo"
+}
+
+];
+
+const CATS = [
+
+{id:"all",label:"All"},
+{id:"greet",label:"Greetings"},
+{id:"polite",label:"Polite"},
+{id:"thanks",label:"Thanks"},
+{id:"restaurant",label:"Restaurant"},
+{id:"travel",label:"Travel"}
+
+];
+
+const CAT_MAP = Object.fromEntries(CATS.map(c => [c.id,c]));
+
+let activeCat = "all";
+
+function buildFilters(){
+
+const el = document.getElementById("filter-bar");
+
+el.innerHTML = CATS.map(c => `
+
+<button class="cat-btn ${c.id===activeCat ? 'active':''}" data-c="${c.id}">
+${c.label}
+</button>
+
+`).join("");
+
+el.querySelectorAll(".cat-btn").forEach(btn => {
+
+btn.addEventListener("click",()=>{
+
+activeCat = btn.dataset.c;
+
+buildFilters();
+render();
+
+});
+
+});
+
+}
+
+function speak(text){
+
+window.speechSynthesis.cancel();
+
+const utter = new SpeechSynthesisUtterance(text);
+
+utter.lang = "ko-KR";
+utter.rate = 0.8;
+utter.pitch = 1;
+
+speechSynthesis.speak(utter);
+
+}
+
+function rowHTML(w){
+
+return `
+
+<div class="word-row">
+
+<div class="col-en">
+<span class="en-phrase">${w.en}</span>
+<span class="en-ctx">${w.ctx}</span>
+</div>
+
+<div class="col-kr">
+
+<span class="kr-rom">${w.kr_r}</span>
+<span class="kr-main">${w.kr}</span>
+
+<button
+class="speak-btn"
+onclick="speak('${w.kr.replace(/'/g,"\\'")}')">
+🔊
+</button>
+
+</div>
+
+</div>
+
+`;
+
+}
+
+function render(){
+
+const filtered =
+activeCat === "all"
+? ALL
+: ALL.filter(w => w.cat === activeCat);
+
+document.getElementById("phrase-count").textContent =
+`${filtered.length} phrases`;
+
+if(activeCat === "all"){
+
+const groups = {};
+
+filtered.forEach(w => {
+
+(groups[w.cat] = groups[w.cat] || []).push(w);
+
+});
+
+document.getElementById("list").innerHTML =
+
+Object.keys(groups).map(cat => `
+
+<div class="group-head">
+${CAT_MAP[cat].label}
+</div>
+
+${groups[cat].map(rowHTML).join("")}
+
+`).join("");
+
+}else{
+
+document.getElementById("list").innerHTML =
+filtered.map(rowHTML).join("");
+
+}
+
+}
+
+document.getElementById("phrase-total").textContent = ALL.length;
+
+buildFilters();
+render();
+
+</script>
+
+</body>
+</html>
