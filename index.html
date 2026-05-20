@@ -1,55 +1,92 @@
 <!-- =========================================
-HOMIGA — KOREAN LUXURY AR DINING UI
-FULL UPDATED UI REPLACEMENT
+REPLACE THIS ENTIRE HEADER SECTION
 ========================================= -->
 
-<!-- REPLACE ONLY THE <STYLE> SECTION -->
-<!-- KEEP YOUR EXISTING SCRIPT + AR SYSTEM -->
+<header class="site-header">
+  <div class="seigaiha-bg"></div>
 
-<style>
+  <div style="position:absolute;top:max(env(safe-area-inset-top),1rem);right:1rem;z-index:20;">
+    <a href="FunZone.html" class="funzone-btn">🎮 FunZone</a>
+  </div>
 
-*,
-*::before,
-*::after{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-}
+  <div id="language-picker">
+    <select id="lang-select">
+      <option value="en">English</option>
+      <option value="kr">한국어</option>
+      <option value="it">Italiano</option>
+      <option value="kn">ಕನ್ನಡ</option>
+      <option value="ta">தமிழ்</option>
+      <option value="ml">മലയാളം</option>
+      <option value="te">తెలుగు</option>
+    </select>
+  </div>
 
-:root{
+  <div class="header-mon"></div>
 
-  --bg:#050816;
-  --bg2:#0b1220;
+  <p class="header-kanji">
+    SEOUL LUXURY ITALIAN DINING
+  </p>
 
-  --card:rgba(18,25,38,0.82);
+  <h1 class="header-title">
+    HOMIGA
+  </h1>
 
-  --primary:#8b5cf6;
-  --primary2:#22d3ee;
+  <span class="header-title-jp">
+    호미가 이탈리안 다이닝
+  </span>
 
-  --text:#f8fafc;
-  --soft:#94a3b8;
+  <div class="brush-divider"></div>
 
-  --border:rgba(255,255,255,0.08);
+  <p class="header-sub" id="ui-sub-tag">
+    Korean Inspired Italian Fine Dining
+  </p>
+
+  <span class="ar-badge">
+    <span class="ar-dot"></span>
+    <span id="ui-ar-badge">
+      Interactive 3D & AR Preview
+    </span>
+  </span>
+
+</header>
+
+
+<!-- =========================================
+REPLACE THIS ENTIRE :ROOT SECTION
+========================================= -->
+
+:root {
+
+  --font-serif: 'Noto Serif KR', serif;
+  --font-sans: 'Noto Sans KR', sans-serif;
+  --font-display: 'Orbitron', sans-serif;
+  --font-body: 'Poppins', sans-serif;
+
+  --bg-dark: #050816;
+  --bg-card: rgba(17,24,39,0.92);
+
+  --primary: #8b5cf6;
+  --primary2: #22d3ee;
+
+  --text: #f8fafc;
+  --soft: #94a3b8;
+
+  --border: rgba(255,255,255,0.08);
 
   --shadow:
   0 10px 40px rgba(0,0,0,0.45);
 
   --glow:
-  0 0 20px rgba(139,92,246,0.45),
-  0 0 40px rgba(34,211,238,0.15);
-
-  --radius:28px;
-
-  --font-main:'Poppins',sans-serif;
-  --font-kr:'Noto Sans KR',sans-serif;
-  --font-display:'Orbitron',sans-serif;
+  0 0 20px rgba(139,92,246,0.35),
+  0 0 50px rgba(34,211,238,0.12);
 }
 
-html{
-  scroll-behavior:smooth;
-}
 
-body{
+/* =========================================
+REPLACE BODY CSS
+========================================= */
+
+body {
 
   background:
   radial-gradient(circle at top left,
@@ -66,79 +103,51 @@ body{
   #07101c 50%,
   #020617 100%);
 
-  color:var(--text);
+  color: var(--text);
 
-  min-height:100vh;
+  min-height: 100vh;
 
-  font-family:var(--font-main);
+  font-family: var(--font-sans);
 
-  overflow-x:hidden;
 }
 
-/* =========================
-HEADER
-========================= */
 
-.site-header{
+/* =========================================
+REPLACE HEADER CSS
+========================================= */
 
-  position:relative;
+.site-header {
 
-  overflow:hidden;
+  position: relative;
 
-  text-align:center;
+  overflow: hidden;
+
+  text-align: center;
 
   padding:
-  max(env(safe-area-inset-top),70px)
-  20px
-  50px;
-
-}
-
-.site-header::before{
-
-  content:'';
-
-  position:absolute;
-  inset:0;
+  max(env(safe-area-inset-top), 3rem)
+  1rem
+  3rem;
 
   background:
-  radial-gradient(circle at center,
-  rgba(139,92,246,0.18),
-  transparent 55%);
+  linear-gradient(
+  180deg,
+  rgba(10,15,25,0.96),
+  rgba(5,8,22,0.98));
 
-  filter:blur(80px);
-
-  pointer-events:none;
 }
 
-.header-mon{
-  display:none;
-}
+.header-title {
 
-.header-kanji{
+  font-family: var(--font-display);
 
-  font-size:12px;
+  font-size: clamp(40px,8vw,90px);
 
-  letter-spacing:6px;
+  font-weight: 700;
 
-  color:rgba(255,255,255,0.45);
+  letter-spacing: 8px;
 
-  margin-bottom:20px;
-
-  text-transform:uppercase;
-}
-
-.header-title{
-
-  font-family:var(--font-display);
-
-  font-size:clamp(42px,10vw,90px);
-
-  font-weight:700;
-
-  letter-spacing:8px;
-
-  margin-bottom:10px;
+  margin-bottom: 10px;
 
   background:
   linear-gradient(
@@ -148,232 +157,95 @@ HEADER
   #22d3ee,
   #ffffff);
 
-  background-size:300%;
+  background-size: 300%;
 
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 
-  animation:shine 8s linear infinite;
+  animation: shine 8s linear infinite;
 }
 
-@keyframes shine{
-  0%{background-position:0%;}
-  100%{background-position:300%;}
-}
+@keyframes shine {
 
-.header-title::after{
-
-  content:'호미가 이탈리안 다이닝';
-
-  display:block;
-
-  margin-top:16px;
-
-  font-family:var(--font-kr);
-
-  font-size:clamp(16px,3vw,28px);
-
-  font-weight:400;
-
-  letter-spacing:6px;
-
-  color:rgba(255,255,255,0.75);
-
-}
-
-.brush-divider{
-
-  width:120px;
-  height:2px;
-
-  margin:25px auto;
-
-  background:
-  linear-gradient(
-  90deg,
-  transparent,
-  var(--primary),
-  var(--primary2),
-  transparent);
-
-  border-radius:100px;
-}
-
-.header-sub{
-
-  font-size:13px;
-
-  letter-spacing:3px;
-
-  text-transform:uppercase;
-
-  color:rgba(255,255,255,0.5);
-
-  margin-bottom:20px;
-}
-
-.ar-badge{
-
-  display:inline-flex;
-
-  align-items:center;
-
-  gap:10px;
-
-  padding:12px 22px;
-
-  border-radius:100px;
-
-  background:
-  rgba(255,255,255,0.05);
-
-  border:1px solid rgba(255,255,255,0.08);
-
-  backdrop-filter:blur(20px);
-
-  color:white;
-
-  box-shadow:var(--glow);
-
-  font-size:12px;
-
-  letter-spacing:1px;
-}
-
-.ar-dot{
-
-  width:10px;
-  height:10px;
-
-  border-radius:50%;
-
-  background:var(--primary2);
-
-  box-shadow:
-  0 0 10px var(--primary2),
-  0 0 20px var(--primary2);
-
-  animation:pulse 2s infinite;
-}
-
-@keyframes pulse{
-
-  0%{
-    transform:scale(1);
-    opacity:1;
+  0% {
+    background-position: 0%;
   }
 
-  50%{
-    transform:scale(.7);
-    opacity:.4;
+  100% {
+    background-position: 300%;
   }
 
-  100%{
-    transform:scale(1);
-    opacity:1;
-  }
 }
 
-/* =========================
-LANGUAGE PICKER
-========================= */
+.header-title-jp {
 
-#lang-select{
+  font-family: 'Noto Sans KR', sans-serif;
 
-  background:
-  rgba(255,255,255,0.05);
+  font-size: clamp(16px,3vw,28px);
 
-  color:white;
+  color: rgba(255,255,255,0.75);
 
-  border:1px solid rgba(255,255,255,0.08);
+  letter-spacing: 6px;
 
-  border-radius:100px;
+  margin-bottom: 20px;
 
-  padding:12px 18px;
-
-  backdrop-filter:blur(20px);
-
-  outline:none;
-
-  font-size:13px;
+  display: block;
 }
 
-/* =========================
-TABS
-========================= */
+.header-sub {
 
-.tabs-wrap{
+  color: rgba(255,255,255,0.55);
 
-  position:sticky;
+  letter-spacing: 3px;
 
-  top:0;
+  font-size: 12px;
 
-  z-index:100;
+  margin-bottom: 20px;
+}
 
-  backdrop-filter:blur(30px);
+
+/* =========================================
+REPLACE TABS CSS
+========================================= */
+
+.tabs-wrap {
+
+  position: sticky;
+
+  top: 0;
+
+  z-index: 100;
 
   background:
-  rgba(3,7,18,0.75);
+  rgba(5,8,22,0.92);
 
-  border-top:
-  1px solid rgba(255,255,255,0.04);
+  backdrop-filter: blur(20px);
 
   border-bottom:
-  1px solid rgba(255,255,255,0.04);
+  1px solid rgba(255,255,255,0.06);
 }
 
-.tabs-inner{
+.tab-btn {
 
-  display:flex;
+  padding: 10px 22px;
 
-  gap:14px;
+  border-radius: 100px;
 
-  overflow-x:auto;
-
-  scrollbar-width:none;
-
-  padding:16px;
-
-  justify-content:center;
-}
-
-.tabs-inner::-webkit-scrollbar{
-  display:none;
-}
-
-.tab-btn{
-
-  border:none;
-
-  padding:12px 24px;
-
-  border-radius:100px;
+  border: 1px solid rgba(255,255,255,0.08);
 
   background:
-  rgba(255,255,255,0.05);
+  rgba(255,255,255,0.03);
 
-  color:var(--soft);
+  color: var(--soft);
 
-  cursor:pointer;
+  font-size: 13px;
 
-  transition:.3s;
+  letter-spacing: 1px;
 
-  border:1px solid transparent;
-
-  font-size:13px;
-
-  letter-spacing:1px;
+  transition: .3s;
 }
 
-.tab-btn:hover{
-
-  transform:translateY(-2px);
-
-  border-color:
-  rgba(139,92,246,0.4);
-}
-
-.tab-btn.active{
+.tab-btn.active {
 
   background:
   linear-gradient(
@@ -381,423 +253,69 @@ TABS
   var(--primary),
   var(--primary2));
 
-  color:white;
+  color: white;
 
-  box-shadow:var(--glow);
+  box-shadow: var(--glow);
 }
 
-/* =========================
-MAIN
-========================= */
 
-.main{
+/* =========================================
+REPLACE MENU CARD CSS
+========================================= */
 
-  max-width:1300px;
+.menu-card {
 
-  margin:auto;
-
-  padding:40px 20px 100px;
-}
-
-/* =========================
-SECTION TITLE
-========================= */
-
-.section-label{
-
-  margin:45px 0 25px;
-
-  font-size:14px;
-
-  font-weight:600;
-
-  letter-spacing:4px;
-
-  color:white;
-
-  text-transform:uppercase;
-
-  display:flex;
-
-  align-items:center;
-
-  gap:20px;
-}
-
-.section-label span{
-
-  flex:1;
-
-  height:1px;
-
-  background:
-  linear-gradient(
-  90deg,
-  transparent,
-  rgba(139,92,246,0.5),
-  transparent);
-}
-
-/* =========================
-GRID
-========================= */
-
-.items-grid{
-
-  display:grid;
-
-  grid-template-columns:
-  repeat(auto-fit,minmax(330px,1fr));
-
-  gap:24px;
-}
-
-/* =========================
-CARD
-========================= */
-
-.menu-card{
-
-  position:relative;
-
-  overflow:hidden;
-
-  border-radius:var(--radius);
-
-  background:var(--card);
-
-  border:1px solid var(--border);
-
-  backdrop-filter:blur(24px);
-
-  transition:.45s;
-
-  box-shadow:var(--shadow);
-}
-
-.menu-card:hover{
-
-  transform:
-  translateY(-8px)
-  scale(1.02);
-
-  border-color:
-  rgba(139,92,246,0.45);
-
-  box-shadow:var(--glow);
-}
-
-.card-row{
-  display:block;
-}
-
-.card-thumb{
-
-  width:100%;
-
-  height:240px;
-
-  position:relative;
-
-  overflow:hidden;
-
-  border-radius:
-  var(--radius)
-  var(--radius)
-  0
-  0;
-}
-
-.card-thumb img{
-
-  width:100%;
-  height:100%;
-
-  object-fit:cover;
-
-  transition:1s;
-}
-
-.menu-card:hover .card-thumb img{
-  transform:scale(1.1);
-}
-
-.ar-pill{
-
-  position:absolute;
-
-  top:18px;
-  right:18px;
-
-  padding:10px 18px;
-
-  border-radius:100px;
-
-  background:
-  linear-gradient(
-  135deg,
-  var(--primary),
-  var(--primary2));
-
-  color:white;
-
-  font-size:11px;
-
-  font-weight:600;
-
-  letter-spacing:1px;
-
-  box-shadow:var(--glow);
-}
-
-.card-body{
-
-  padding:26px;
-}
-
-.name-row{
-
-  display:block;
-
-  margin-bottom:12px;
-}
-
-.dish-name{
-
-  font-size:28px;
-
-  font-weight:600;
-
-  margin-bottom:6px;
-
-  color:white;
-}
-
-.dish-name::after{
-
-  content:'한국 셰프 스페셜';
-
-  display:block;
-
-  margin-top:8px;
-
-  font-family:var(--font-kr);
-
-  font-size:13px;
-
-  letter-spacing:2px;
-
-  color:var(--primary2);
-}
-
-.dish-desc{
-
-  font-size:14px;
-
-  line-height:1.9;
-
-  color:var(--soft);
-
-  margin-bottom:24px;
-}
-
-.tags-row{
-
-  display:flex;
-
-  gap:8px;
-
-  flex-wrap:wrap;
-
-  margin-bottom:20px;
-}
-
-.tag{
-
-  padding:8px 14px;
-
-  border-radius:100px;
-
-  background:
-  rgba(255,255,255,0.05);
-
-  color:white;
-
-  font-size:11px;
-
-  border:1px solid rgba(255,255,255,0.06);
-}
-
-.card-footer{
-
-  display:flex;
-
-  align-items:center;
-
-  justify-content:space-between;
-
-  gap:20px;
-}
-
-.dish-price{
-
-  font-size:34px;
-
-  font-weight:700;
-
-  background:
-  linear-gradient(
-  135deg,
-  #ffffff,
-  var(--primary2));
-
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
-
-.price-sym{
-  font-size:15px;
-}
-
-.ar-btn{
-
-  border:none;
-
-  padding:14px 24px;
-
-  border-radius:100px;
-
-  background:
-  linear-gradient(
-  135deg,
-  var(--primary),
-  var(--primary2));
-
-  color:white;
-
-  font-weight:600;
-
-  cursor:pointer;
-
-  transition:.3s;
-
-  box-shadow:var(--glow);
-}
-
-.ar-btn:hover{
-
-  transform:scale(1.05);
-}
-
-/* =========================
-MODAL
-========================= */
-
-.modal-overlay{
-
-  background:
-  rgba(0,0,0,0.82);
-
-  backdrop-filter:blur(14px);
-}
-
-.modal-card{
-
-  background:
-  linear-gradient(
-  180deg,
-  #0f172a 0%,
-  #0b1220 100%);
-
-  border-radius:30px;
-
-  border:1px solid rgba(255,255,255,0.08);
-
-  overflow:hidden;
-
-  color:white;
-}
-
-.modal-viewer-wrap{
-
-  background:
-  linear-gradient(
-  180deg,
-  #111827,
-  #020617);
-}
-
-.modal-body{
-
-  padding:30px;
-}
-
-.modal-name{
-
-  font-size:34px;
-
-  margin-bottom:8px;
-
-  color:white;
-}
-
-.modal-jp{
-
-  font-family:var(--font-kr);
-
-  font-size:14px;
-
-  letter-spacing:3px;
-
-  color:var(--primary2);
-
-  margin-bottom:20px;
-}
-
-.modal-desc{
-
-  background:
-  rgba(255,255,255,0.04);
-
-  border-left:
-  3px solid var(--primary);
-
-  border-radius:16px;
-
-  padding:20px;
-
-  line-height:1.9;
-
-  color:var(--soft);
-}
-
-.modal-price{
-
-  font-size:38px;
-
-  font-weight:700;
-
-  color:white;
-}
-
-.modal-close{
-
-  background:
-  rgba(255,255,255,0.08);
+  background: var(--bg-card);
 
   border:
-  1px solid rgba(255,255,255,0.08);
+  1px solid rgba(255,255,255,0.06);
 
-  border-radius:50%;
+  border-radius: 28px;
 
-  color:white;
+  overflow: hidden;
+
+  transition: .4s;
+
+  backdrop-filter: blur(20px);
+
+  box-shadow: var(--shadow);
+
 }
 
-.modal-ar-launch-btn{
+.menu-card:hover {
 
-  border:none;
+  transform:
+  translateY(-6px)
+  scale(1.01);
 
-  border-radius:100px;
+  border-color:
+  rgba(139,92,246,0.35);
+
+  box-shadow: var(--glow);
+}
+
+.card-thumb {
+
+  border-radius:
+  24px;
+
+  overflow: hidden;
+
+  border:
+  1px solid rgba(255,255,255,0.05);
+}
+
+.card-thumb img {
+
+  transition: 1s;
+}
+
+.menu-card:hover .card-thumb img {
+
+  transform: scale(1.08);
+}
+
+.ar-pill {
 
   background:
   linear-gradient(
@@ -805,140 +323,211 @@ MODAL
   var(--primary),
   var(--primary2));
 
-  color:white;
+  color: white;
 
-  box-shadow:var(--glow);
+  border-radius: 100px;
+
+  padding: 5px 10px;
+
+  font-size: 10px;
+
+  letter-spacing: 1px;
 }
 
-/* =========================
-FOOTER
-========================= */
+.dish-name {
 
-.site-footer{
+  font-size: 26px;
 
-  text-align:center;
+  font-weight: 600;
 
-  padding:50px 20px;
+  color: white;
 
-  color:rgba(255,255,255,0.5);
+  margin-bottom: 6px;
+}
 
-  line-height:2;
+.dish-jp {
 
-  border-top:
-  1px solid rgba(255,255,255,0.04);
+  font-family: 'Noto Sans KR', sans-serif;
+
+  color: #67e8f9;
+
+  font-size: 13px;
+
+  letter-spacing: 2px;
+
+  margin-bottom: 10px;
+}
+
+.dish-desc {
+
+  color: var(--soft);
+
+  line-height: 1.8;
+
+  font-size: 14px;
+}
+
+.dish-price {
+
+  font-size: 34px;
+
+  font-weight: 700;
+
+  background:
+  linear-gradient(
+  135deg,
+  white,
+  #67e8f9);
+
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.ar-btn {
+
+  border: none;
+
+  border-radius: 100px;
+
+  padding: 14px 24px;
+
+  background:
+  linear-gradient(
+  135deg,
+  var(--primary),
+  var(--primary2));
+
+  color: white;
+
+  font-weight: 600;
+
+  box-shadow: var(--glow);
+}
+
+
+/* =========================================
+REPLACE SECTION LABEL CSS
+========================================= */
+
+.section-label {
+
+  color: white;
+
+  font-size: 14px;
+
+  letter-spacing: 5px;
+
+  margin: 40px 0 20px;
+
+  text-transform: uppercase;
+}
+
+
+/* =========================================
+REPLACE FOOTER CSS
+========================================= */
+
+.site-footer {
+
+  text-align: center;
+
+  padding: 50px 20px;
 
   background:
   rgba(255,255,255,0.02);
+
+  border-top:
+  1px solid rgba(255,255,255,0.05);
+
+  color:
+  rgba(255,255,255,0.45);
+
+  line-height: 2;
 }
 
-.site-footer::before{
 
-  content:'HOMIGA • 호미가';
+/* =========================================
+NOW REPLACE THIS ENTIRE I18N OBJECT
+========================================= */
 
-  display:block;
+const I18N = {
 
-  margin-bottom:15px;
+  en: {
+    sub:'Korean Inspired Italian Fine Dining',
+    badge:'Interactive 3D & AR Preview',
+    veg:'veg',
+    loading:'Loading...',
+    all:'ALL',
+    starter:'STARTERS',
+    main:'MAIN COURSE',
+    dessert:'DESSERTS'
+  },
 
-  font-size:20px;
-
-  font-family:var(--font-display);
-
-  color:white;
-
-  letter-spacing:4px;
-}
-
-/* =========================
-FUNZONE BUTTON
-========================= */
-
-.funzone-btn{
-
-  background:
-  linear-gradient(
-  135deg,
-  var(--primary),
-  var(--primary2));
-
-  border:none;
-
-  border-radius:100px;
-
-  padding:12px 20px;
-
-  color:white;
-
-  text-decoration:none;
-
-  box-shadow:var(--glow);
-}
-
-/* =========================
-MOBILE
-========================= */
-
-@media(max-width:768px){
-
-  .header-title{
-    letter-spacing:4px;
+  kr: {
+    sub:'한국 감성 이탈리안 파인 다이닝',
+    badge:'인터랙티브 3D & AR 미리보기',
+    veg:'채식',
+    loading:'로딩중...',
+    all:'전체',
+    starter:'스타터',
+    main:'메인 코스',
+    dessert:'디저트'
   }
 
-  .card-thumb{
-    height:220px;
+};
+
+
+/* =========================================
+REPLACE THIS ENTIRE CAT_LABELS
+========================================= */
+
+const CAT_LABELS = {
+
+  all: {
+    en:'ALL',
+    kr:'전체'
+  },
+
+  starter: {
+    en:'STARTERS',
+    kr:'스타터'
+  },
+
+  dessert: {
+    en:'DESSERTS',
+    kr:'디저트'
+  },
+
+  'main-course': {
+    en:'MAIN COURSE',
+    kr:'메인 코스'
   }
 
-  .dish-name{
-    font-size:24px;
-  }
+};
 
-  .modal-name{
-    font-size:28px;
-  }
 
-}
+/* =========================================
+NOW REPLACE THIS INSIDE rowToDish()
+========================================= */
 
-</style>
+const name = row[`name${sfx}`] || row['name'] || '';
+const nameKr = row['name_kr'] || '';
 
-<!-- =========================================
-NOW REPLACE THIS HEADER SECTION ONLY
-========================================= -->
 
-<header class="site-header">
+/* =========================================
+AND INSIDE return { } ADD THIS
+========================================= */
 
-  <div style="position:absolute;top:max(env(safe-area-inset-top),1rem);right:1rem;z-index:20;">
-    <a href="FunZone.html" class="funzone-btn">🎮 FunZone</a>
+nameKr,
+
+
+/* =========================================
+NOW REPLACE THIS INSIDE cardHTML()
+========================================= */
+
+<div class="name-row">
+  <div>
+    <div class="dish-name">${d.name}</div>
+    <div class="dish-jp">${d.nameKr || ''}</div>
   </div>
-
-  <div id="language-picker">
-    <select id="lang-select">
-      <option value="en">English</option>
-      <option value="it">Italiano</option>
-      <option value="kn">ಕನ್ನಡ</option>
-      <option value="ta">தமிழ்</option>
-      <option value="ml">മലയാളം</option>
-      <option value="te">తెలుగు</option>
-    </select>
-  </div>
-
-  <p class="header-kanji">
-    SEOUL LUXURY AR DINING
-  </p>
-
-  <h1 class="header-title">
-    HOMIGA
-  </h1>
-
-  <div class="brush-divider"></div>
-
-  <p class="header-sub" id="ui-sub-tag">
-    Korean Inspired Italian Fine Dining Experience
-  </p>
-
-  <span class="ar-badge">
-    <span class="ar-dot"></span>
-    <span id="ui-ar-badge">
-      Interactive 3D & AR Preview
-    </span>
-  </span>
-
-</header>
+</div>
