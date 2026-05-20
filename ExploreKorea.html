@@ -54,7 +54,7 @@
 </noscript>
 
 <!-- Preload ONLY the first card poster (LCP candidate) -->
-<link rel="preload" as="image" href="ExploreItally/amalficoast/amalficoast.png" fetchpriority="high">
+<link rel="preload" as="image" href="ExploreKorea/amalficoast/amalficoast.png" fetchpriority="high">
 
 <style>
 :root{
@@ -443,7 +443,7 @@ const dotsEl = document.getElementById('dots');
 const state  = {};
 
 landmarks.forEach((l, i) => {
-  const base     = `ExploreItally/${l.folder}/${l.file}`;
+  const base     = `ExploreKorea/${l.folder}/${l.file}`;
   const glbPath  = `${base}.glb`;
   const usdzPath = `${base}.usdz`;
   const pngPath  = `${base}.png`;
@@ -720,7 +720,7 @@ grid.addEventListener('scroll', () => {
    FIX: original code called ensureMV() here,
    triggering a 500 KB download immediately.
 ───────────────────────────────────────────── */
-prefetchGlb(`ExploreItally/${landmarks[0].folder}/${landmarks[0].file}.glb`);
+prefetchGlb(`ExploreKorea/${landmarks[0].folder}/${landmarks[0].file}.glb`);
 // ensureMV() is intentionally NOT called here.
 // It fires on first hover/touch/tap, saving bandwidth for users who
 // only browse without interacting with AR.
