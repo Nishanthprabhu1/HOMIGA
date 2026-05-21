@@ -681,7 +681,7 @@ const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent) ||
 
 function rowToDish(row) {
   const truthy = v => ['true','yes','1'].includes((v||'').toLowerCase());
-  const sfx = {it:'_it',kn:'_kn',ta:'_ta',ml:'_ml',te:'_te',hi:'_hi'}[currentLang]||'';
+  const sfx = {kr:'_kr',kn:'_kn',ta:'_ta',ml:'_ml',te:'_te',hi:'_hi'}[currentLang]||'';
   const desc = row[`description${sfx}`] || row['description'] || '';
   const name = row[`name${sfx}`]        || row['name']        || '';
   const local = getLocalAssets(row['name']);
