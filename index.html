@@ -33,10 +33,10 @@
         as="fetch" crossorigin="anonymous" />
 
   <!-- STEP 3 — Fonts: non-render-blocking (display=swap) -->
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600;700&family=Noto+Sans+JP:wght@300;400;500&family=Cinzel:wght@400;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600;700&family=Noto+Sans+KR:wght@300;400;500&family=Cinzel:wght@400;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
   <!-- Instant fallback for no-JS / first paint -->
   <noscript>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600;700&family=Noto+Sans+JP:wght@300;400;500&family=Cinzel:wght@400;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600;700&family=Noto+Sans+KR:wght@300;400;500&family=Cinzel:wght@400;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet" />
   </noscript>
 
   <style>
@@ -510,7 +510,8 @@ justify-content:center;
 overflow:hidden;
 z-index:1;
 transition:opacity 0.4s ease;
-"> style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden;z-index:1;"></div>
+"></div> 
+      
 
       <div class="mv-ar-badge" id="mv-ar-badge">✦ AR Ready</div>
       <div class="scale-info"  id="scale-info">Actual portion size</div>
@@ -690,7 +691,8 @@ function preloadAboveFold(dishes, count = 4) {
 
     });
   });
-}{
+}
+  {
   const idle = window.requestIdleCallback || (cb => setTimeout(cb, 200));
   idle(() => {
     dishes.slice(0, count).forEach(d => {
@@ -980,27 +982,7 @@ function onMVLoaded(d) {
     }
   }, 380);
 }
-  if (currentDish?.id !== d.id) return;
-
-  hideLoader();
-
-  elMV.classList.add('mv-ready');
-  elArBadge.classList.add('visible');
-  elScaleInfo.textContent = 'Actual portion size';
-
-  setTimeout(() => {
-    if (currentDish?.id === d.id) {
-      elPhoto.style.opacity = '0';
-
-      setTimeout(() => {
-        elPhoto.style.display = 'none';
-      }, 50);
-    }
-  }, 380);
-}
-  elMV.classList.add('mv-ready');
-  elArBadge.classList.add('visible');
-}
+  
 
 elMV.addEventListener('load',  () => { if (currentDish) onMVLoaded(currentDish); });
 elMV.addEventListener('error', () => {
