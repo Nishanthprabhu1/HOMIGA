@@ -500,7 +500,17 @@
       </model-viewer>
 
       <!-- Photo fallback (shown before model loads) -->
-      <div id="modal-photo" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden;z-index:1;"></div>
+      <div id="modal-photo"
+style="
+position:absolute;
+inset:0;
+display:flex;
+align-items:center;
+justify-content:center;
+overflow:hidden;
+z-index:1;
+transition:opacity 0.4s ease;
+"> style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden;z-index:1;"></div>
 
       <div class="mv-ar-badge" id="mv-ar-badge">✦ AR Ready</div>
       <div class="scale-info"  id="scale-info">Actual portion size</div>
@@ -632,7 +642,14 @@ const csvPromise = (async () => {
    model-viewer MODULE — lazy-loaded ONCE
 ───────────────────────────────────────────── */
 const idleCallback = window.requestIdleCallback || (cb => setTimeout(cb, 200));
+let mvModulePromise = null;
 
+function ensureModelViewerLoaded() {
+  if (!mvModulePromise) {
+    mvModulePromise = import('https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js');
+  }
+  return mvModulePromise;
+}
 idleCallback(() => ensureModelViewerLoaded());
 
 /* ─────────────────────────────────────────────
@@ -665,8 +682,8 @@ function preloadAboveFold(dishes, count = 4) {
         link.href = d.posterPath;
         document.head.appendChild(link);
       }
-elMV.setAttribute('poster', d.posterPath || '');
-      // NEW: prefetch GLB early
+
+      // prefetch GLB
       if (d.glbPath) {
         prefetchGlb(d.glbPath);
       }
@@ -877,6 +894,7 @@ function openModal(id) {
   const d = allDishes.find(x=>x.id===id);
   if (!d) return;
   currentDish = d;
+  elMV.setAttribute('poster', d.posterPath || '');
 
   document.getElementById('modal-name').textContent = d.name;
   document.getElementById('modal-jp').textContent   = d.jp||'';
@@ -945,8 +963,23 @@ function openModal(id) {
 
 function onMVLoaded(d) {
   if (currentDish?.id !== d.id) return;
+
   hideLoader();
- function onMVLoaded(d) {
+
+  elMV.classList.add('mv-ready');
+  elArBadge.classList.add('visible');
+  elScaleInfo.textContent = 'Actual portion size';
+
+  setTimeout(() => {
+    if (currentDish?.id === d.id) {
+      elPhoto.style.opacity = '0';
+
+      setTimeout(() => {
+        elPhoto.style.display = 'none';
+      }, 50);
+    }
+  }, 380);
+}
   if (currentDish?.id !== d.id) return;
 
   hideLoader();
