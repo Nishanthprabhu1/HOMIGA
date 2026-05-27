@@ -577,13 +577,11 @@ LANDMARKS.forEach((lm, idx) => {
     btn3d.textContent = active ? '✕ 2D' : '⬡ 3D';
   });
 
-  
-
   btnAR.addEventListener('click', () => {
-    if (!modelReady || btnAR.disabled) return;
-    if (!mv.canActivateAR) { nosup.style.display = 'block'; return; }
-    try { mv.activateAR(); } catch (e) { console.warn('activateAR error:', e); }
-  });
+
+  window.location.href =
+  `ar.html?model=${encodeURIComponent(glbPath)}`;
+});
 });
 
 /* Scroll dots */
