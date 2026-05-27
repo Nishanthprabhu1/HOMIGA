@@ -613,24 +613,12 @@ btnAR.addEventListener('click', () => {
     return;
   }
 
-  const isiPhone =
-    /iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-  const msg = isiPhone
-    ? 'AR will open now.\n\nTo capture photo:\nPress Side Button + Volume Up'
-    : 'AR will open now.\n\nTo capture photo:\nPress Power + Volume Down';
-
-  alert(msg);
-
-  setTimeout(() => {
-
-    try {
-      mv.activateAR();
-    } catch (e) {
-      console.warn('activateAR error:', e);
-    }
-
-  }, 300);
+ try {
+  mv.activateAR();
+} catch (e) {
+  console.warn('activateAR error:', e);
+}
 
 });
 });
