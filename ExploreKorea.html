@@ -570,63 +570,41 @@ LANDMARKS.forEach((lm, idx) => {
 
   captureBtn.addEventListener('click', async () => {
 
-  // If AR session is active
-  if (mv.xrSession || document.fullscreenElement) {
+  // Hide buttons temporarily
+  captureBtn.style.display = 'none';
 
-    // Mobile native AR viewers cannot be captured directly
-    alert(
-      'To capture the AR view:\n\n' +
-      'Android → Press Volume Down + Power\n' +
-      'iPhone → Press Side Button + Volume Up'
-    );
+  // Small flash effect
+  const flash = document.createElement('div');
+  flash.style.position = 'fixed';
+  flash.style.inset = '0';
+  flash.style.background = 'white';
+  flash.style.zIndex = '9999';
+  flash.style.opacity = '0.9';
+  flash.style.pointerEvents = 'none';
+  flash.style.transition = 'opacity .4s ease';
+  document.body.appendChild(flash);
 
-    return;
+  setTimeout(() => {
+    flash.style.opacity = '0';
+  }, 50);
+
+  setTimeout(() => {
+    flash.remove();
+  }, 500);
+
+  // Native screenshot instruction
+  const isiPhone = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+  if (isiPhone) {
+    alert('Press Side Button + Volume Up to capture AR photo');
+  } else {
+    alert('Press Power + Volume Down to capture AR photo');
   }
 
-  // Normal 3D viewer screenshot
-  try {
-
-    const canvas = document.createElement('canvas');
-    const scale = window.devicePixelRatio || 2;
-
-    canvas.width = mv.clientWidth * scale;
-    canvas.height = mv.clientHeight * scale;
-
-    const ctx = canvas.getContext('2d');
-    ctx.scale(scale, scale);
-
-    const internalCanvas =
-      mv.shadowRoot.querySelector('canvas');
-
-    if (!internalCanvas) {
-      alert('Screenshot not available');
-      return;
-    }
-
-    ctx.drawImage(
-      internalCanvas,
-      0,
-      0,
-      mv.clientWidth,
-      mv.clientHeight
-    );
-
-    const link = document.createElement('a');
-
-    link.download =
-      `${lm.name}-3D-View.png`;
-
-    link.href =
-      canvas.toDataURL('image/png');
-
-    link.click();
-
-  } catch (err) {
-
-    console.error(err);
-    alert('Screenshot failed');
-
-  }
+  // Show button again
+  setTimeout(() => {
+    captureBtn.style.display = 'flex';
+  }, 1000);
 
 });
 
