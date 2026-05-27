@@ -405,9 +405,7 @@ LANDMARKS.forEach((lm, idx) => {
 
   const s = (lm.arScale || 1).toFixed(6);
 
-  const arModes = IS_IOS
-    ? 'quick-look webxr scene-viewer'
-    : 'webxr scene-viewer quick-look';
+  const arModes = 'webxr';
 
   const card = document.createElement('div');
   card.className   = 'landmark-card';
@@ -542,40 +540,7 @@ LANDMARKS.forEach((lm, idx) => {
     btnAR.textContent = '⚠ Unavailable';
   });
 
-  captureBtn.addEventListener('click', async () => {
-
-  try {
-
-    const canvas =
-      mv.shadowRoot.querySelector('canvas');
-
-    if (!canvas) {
-      alert('Screenshot not available');
-      return;
-    }
-
-    const image =
-      canvas.toDataURL('image/png');
-
-    const link =
-      document.createElement('a');
-
-    link.href = image;
-
-    link.download =
-      `${lm.name}-AR-Photo.png`;
-
-    link.click();
-
-  } catch (err) {
-
-    console.error(err);
-
-    alert('Capture failed');
-
-  }
-
-});
+  
 
   wrap.addEventListener('touchstart', e => {
     if (wrap.classList.contains('active') && e.touches.length > 1) {
