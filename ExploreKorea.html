@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Explore Korea</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
+<link rel="preload" as="image" href="ExploreKorea/Cheonchuksa_Temple/Cheonchuksa_Temple.png" fetchpriority="high">
+
+<style>
+:root {
+  --ink:   #080604;
+  --paper: #F0E8D5;
+  --gold:  #B8973A;
+  --gold2: #D4AE52;
+  --ff-en: 'Cormorant Garamond', 'Palatino Linotype', Georgia, serif;
+  --ff-ui: 'DM Sans', 'Helvetica Neue', Arial, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--ff-ui);
+  height: 100svh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.back-btn {
+  position: fixed;
+  left: 16px;
+  top: max(env(safe-area-inset-top), 14px);
+  z-index: 100;
+  text-decoration: none;
+  color: var(--paper);
+  background: rgba(255,255,255,.08);
+  padding: 10px 16px;
+  border-radius: 30px;
+  border: 1px solid rgba(255,255,255,.15);
+  backdrop-filter: blur(12px);
+  font-size: 11px;
+}
+
+.nav-header {
+  padding: max(env(safe-area-inset-top), 20px) 20px 16px;
+  text-align: center;
+  border-bottom: 1px solid rgba(184,151,58,.2);
+}
+.nav-header h1 {
+  font-family: var(--ff-en);
+  font-size: clamp(28px, 6vw, 40px);
+  color: var(--gold2);
+  letter-spacing: .08em;
+}
+.nav-header p {
+  margin-top: 6px;
+  font-size: 10px;
+  letter-spacing: .28em;
+  text-transform: uppercase;
+  opacity: .6;
+}
+
+.explorer-grid {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 20px 16px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  touch-action: pan-x;
+}
+.explorer-grid::-webkit-scrollbar { display: none; }
+
+.landmark-card {
+  flex: 0 0 min(85vw, 360px);
+  height: min(64vh, 540px);
+  background: #0f0c09;
+  border: 1px solid rgba(184,151,58,.25);
+  border-radius: 18px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  scroll-snap-align: center;
+}
+
+.model-wrap {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(circle at center, #1b160c 0%, #080604 100%);
+}
+
+.model-poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 2;
+  transition: opacity .45s;
+}
+
+.model-wrap:not(.active) .model-poster { opacity: 1; }
+.model-wrap.active .model-poster { opacity: 0; }
+
+model-viewer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .4s;
+  background: transparent;
+  --poster-color: transparent;
+  touch-action: none;
+  --touch-action: none;
+}
+model-viewer::part(default-progress-bar) { display: none; }
+model-viewer > [slot="ar-button"] { display: none !important; }
+
+.model-wrap.active model-viewer {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.ar-badge {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  z-index: 8;
+  padding: 6px 12px;
+  border-radius: 30px;
+  font-size: 9px;
+  background: rgba(8,6,4,.8);
+  border: 1px solid var(--gold);
+  color: var(--gold2);
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity .35s, transform .35s;
+  pointer-events: none;
+}
+.ar-badge.visible { opacity: 1; transform: translateY(0); }
+
+/* ── 3D mode capture button (existing) ── */
+.capture-btn {
+  position: absolute;
+  bottom: 18px;
+  right: 18px;
+  z-index: 20;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,.85);
+  background: rgba(20,16,10,.55);
+  backdrop-filter: blur(14px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: all .3s ease;
+  overflow: hidden;
+}
+.model-wrap.active .capture-btn { opacity: 1; pointer-events: auto; }
+.capture-btn:active { transform: scale(.88); }
+
+/* Camera icon SVG inside button */
+.capture-btn svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform .2s;
+}
+.capture-btn:active svg { transform: scale(.85); }
+
+/* shutter flash overlay */
+.shutter-flash {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+  border-radius: 18px;
+}
+.shutter-flash.fire {
+  animation: shutterFire .38s ease forwards;
+}
+@keyframes shutterFire {
+  0%   { opacity: .75; }
+  100% { opacity: 0; }
+}
+
+/* ── AR overlay screenshot button (shown during AR session) ── */
+#ar-capture-overlay {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  bottom: max(env(safe-area-inset-bottom), 32px);
+  left: 50%;
+  transform: translateX(-50%);
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+#ar-capture-overlay.ar-active { display: flex; }
+
+/* big shutter ring */
+.ar-shutter-btn {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 3px solid rgba(255,255,255,.9);
+  background: rgba(255,255,255,.18);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 0 5px rgba(255,255,255,.12), 0 4px 24px rgba(0,0,0,.35);
+  transition: transform .15s, box-shadow .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.ar-shutter-btn:active {
+  transform: scale(.9);
+  box-shadow: 0 0 0 3px rgba(255,255,255,.1), 0 2px 12px rgba(0,0,0,.25);
+}
+.ar-shutter-btn svg {
+  width: 30px; height: 30px;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ar-shutter-label {
+  font-size: 10px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.7);
+  text-shadow: 0 1px 6px rgba(0,0,0,.6);
+  white-space: nowrap;
+}
+
+/* toast notification */
+.ar-toast {
+  position: fixed;
+  top: max(env(safe-area-inset-top), 60px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-12px);
+  z-index: 10000;
+  background: rgba(8,6,4,.88);
+  border: 1px solid rgba(184,151,58,.4);
+  color: var(--gold2);
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-size: 11px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  opacity: 0;
+  pointer-events: none;
+  backdrop-filter: blur(12px);
+  transition: opacity .25s, transform .25s;
+  white-space: nowrap;
+}
+.ar-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* full-screen flash for AR capture */
+.ar-flash {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  background: #fff;
+  pointer-events: none;
+}
+.ar-flash.fire {
+  display: block;
+  animation: arFlash .4s ease forwards;
+}
+@keyframes arFlash {
+  0%   { opacity: .9; }
+  100% { opacity: 0; }
+}
+
+.pinch-hint {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9;
+  background: rgba(8,6,4,.8);
+  border: 1px solid rgba(184,151,58,.35);
+  padding: 7px 14px;
+  border-radius: 30px;
+  font-size: 9px;
+  letter-spacing: .12em;
+  color: var(--gold2);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+}
+.model-wrap.active .pinch-hint {
+  opacity: 1;
+  animation: fadeout 4s ease 2.5s forwards;
+}
+@keyframes fadeout { to { opacity: 0; } }
+
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: rgba(8,6,4,.8);
+  pointer-events: none;
+}
+.loading-overlay.show { display: flex; }
+
+.loader-ring {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  border: 2px solid rgba(184,151,58,.15);
+  border-top-color: var(--gold2);
+  animation: spin .9s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loader-bar-track {
+  width: 110px; height: 3px;
+  background: rgba(184,151,58,.18);
+  border-radius: 10px; overflow: hidden;
+}
+.loader-bar-fill {
+  height: 100%; width: 0%;
+  background: var(--gold2);
+  transition: width .1s linear;
+}
+.loader-label {
+  font-size: 10px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--paper);
+}
+
+.error-overlay {
+  position: absolute; inset: 0; z-index: 11;
+  display: none; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 10px; background: rgba(8,6,4,.75);
+}
+.error-overlay.show { display: flex; }
+.error-icon { font-size: 28px; opacity: .5; }
+.error-msg {
+  font-size: 9px; letter-spacing: .16em;
+  text-transform: uppercase; opacity: .55;
+  text-align: center; padding: 0 20px;
+}
+.retry-btn {
+  background: rgba(184,151,58,.15);
+  border: 1px solid rgba(184,151,58,.4);
+  color: var(--gold2); border-radius: 30px;
+  padding: 8px 20px; font-size: 10px;
+  letter-spacing: .14em; text-transform: uppercase;
+  cursor: pointer;
+}
+
+.ar-no-support {
+  display: none;
+  position: absolute;
+  bottom: 12px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 8;
+  background: rgba(8,6,4,.85);
+  border: 1px solid rgba(184,151,58,.25);
+  padding: 7px 14px; border-radius: 30px;
+  font-size: 9px; letter-spacing: .12em;
+  color: rgba(212,174,82,.5);
+  white-space: nowrap; pointer-events: none;
+}
+
+.landmark-info { padding: 16px; background: #11100d; }
+.landmark-name { font-family: var(--ff-en); font-size: 28px; margin-bottom: 4px; }
+.landmark-city {
+  font-size: 10px; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 14px;
+}
+.btn-row { display: flex; gap: 8px; }
+
+.action-btn {
+  border: none; border-radius: 10px;
+  padding: 13px; font-size: 11px; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase;
+  min-height: 46px; cursor: pointer;
+  transition: opacity .2s, background .2s;
+}
+.action-btn:disabled { opacity: .4; cursor: not-allowed; }
+
+.btn-3d {
+  background: rgba(184,151,58,.14);
+  color: var(--gold2);
+  border: 1px solid rgba(184,151,58,.35);
+}
+.btn-3d.is-active { background: rgba(184,151,58,.28); }
+
+.btn-ar {
+  flex: 1;
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  color: #000;
+  position: relative;
+  overflow: hidden;
+}
+.btn-ar::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,.25);
+  opacity: 0;
+  transition: opacity .18s;
+}
+.btn-ar:hover::before { opacity: 1; }
+.btn-ar.loading {
+  background: rgba(184,151,58,.18);
+  color: var(--gold2);
+  border: 1px solid rgba(184,151,58,.3);
+}
+.btn-ar.error {
+  background: rgba(184,151,58,.1);
+  color: rgba(212,174,82,.4);
+  border: 1px solid rgba(184,151,58,.2);
+}
+
+.scroll-dots {
+  display: flex; justify-content: center; gap: 8px;
+  padding: 12px 0 max(env(safe-area-inset-bottom), 14px);
+}
+.dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(184,151,58,.25);
+  transition: transform .2s, background .2s;
+}
+.dot.active { background: var(--gold2); transform: scale(1.35); }
+</style>
+</head>
+<body>
+
+<a href="FunZone.html" class="back-btn">← Back</a>
+
+<header class="nav-header">
+  <h1>Explore Korea</h1>
+  <p>Augmented Reality Landmarks</p>
+</header>
+
+<div class="explorer-grid" id="grid"></div>
+<div class="scroll-dots"   id="dots"></div>
+
+<!-- AR screenshot overlay (fixed, shown over the system AR view) -->
+<div id="ar-capture-overlay">
+  <button class="ar-shutter-btn" id="ar-shutter-btn" aria-label="Capture AR Screenshot">
+    <!-- camera icon -->
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+      <circle cx="12" cy="13" r="4"/>
+    </svg>
+  </button>
+  <span class="ar-shutter-label">Capture</span>
+</div>
+
+<!-- Full-screen white flash for AR capture feedback -->
+<div class="ar-flash" id="ar-flash"></div>
+
+<!-- Toast for save confirmation -->
+<div class="ar-toast" id="ar-toast"></div>
+
+<script>
+const LANDMARKS = [
+  {
+    name:    'Cheonchuksa Temple',
+    city:    'Korea',
+    folder:  'Cheonchuksa_Temple',
+    file:    'Cheonchuksa_Temple',
+    arScale: .5,
+    orbit:   '30deg 65deg 110%',
+  },
+  {
+    name:    'Seokguram Temple',
+    city:    'Korea',
+    folder:  'Seokguram_Temple',
+    file:    'Seokguram_Temple',
+    arScale: .5,
+    orbit:   '20deg 60deg 105%',
+  },
+  {
+    name:    'Seoul Tower',
+    city:    'Korea',
+    folder:  'seoul_tower',
+    file:    'seoul_tower',
+    arScale: .5,
+    orbit:   '0deg 55deg 105%',
+  },
+  {
+    name:    'Traditional Bridge',
+    city:    'Korea',
+    folder:  'traditional_bridge',
+    file:    'traditional_bridge',
+    arScale: .5,
+    orbit:   '15deg 60deg 110%',
+  },
+];
+
+const IS_IOS = /iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+               (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+const grid           = document.getElementById('grid');
+const dotsEl         = document.getElementById('dots');
+const arOverlay      = document.getElementById('ar-capture-overlay');
+const arShutterBtn   = document.getElementById('ar-shutter-btn');
+const arFlash        = document.getElementById('ar-flash');
+const arToast        = document.getElementById('ar-toast');
+
+let activeARViewer   = null;   // which model-viewer is currently in AR
+let activeARName     = '';     // landmark name for filename
+let toastTimer       = null;
+
+/* ── Toast helper ── */
+function showToast(msg, durationMs = 2800) {
+  if (toastTimer) clearTimeout(toastTimer);
+  arToast.textContent = msg;
+  arToast.classList.add('show');
+  toastTimer = setTimeout(() => arToast.classList.remove('show'), durationMs);
+}
+
+/* ── AR screenshot logic ── */
+async function captureARScreen(landmarkName) {
+  // Trigger visible flash
+  arFlash.classList.remove('fire');
+  void arFlash.offsetWidth; // reflow
+  arFlash.classList.add('fire');
+
+  /* Strategy 1 – model-viewer exposes a captureImage() API in newer builds */
+  if (activeARViewer && typeof activeARViewer.captureImage === 'function') {
+    try {
+      const blob = await activeARViewer.captureImage();
+      downloadBlob(blob, landmarkName);
+      showToast('✦ Saved to downloads');
+      return;
+    } catch (e) { /* fall through */ }
+  }
+
+  /* Strategy 2 – grab the WebXR canvas from shadow DOM */
+  if (activeARViewer) {
+    try {
+      const sr = activeARViewer.shadowRoot;
+      const canvas = sr && (
+        sr.querySelector('canvas[aria-hidden]') ||
+        sr.querySelector('canvas')
+      );
+      if (canvas && canvas.width > 0) {
+        canvas.toBlob(blob => {
+          if (blob) { downloadBlob(blob, landmarkName); showToast('✦ Saved to downloads'); }
+          else      { showToast('⚠ Canvas empty — use system screenshot'); }
+        }, 'image/png');
+        return;
+      }
+    } catch (e) { /* cross-origin restriction, fall through */ }
+  }
+
+  /* Strategy 3 – Screen Capture API (desktop/Android Chrome) */
+  if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
+    try {
+      const stream = await navigator.mediaDevices.getDisplayMedia({ video: { cursor: 'never' } });
+      const track  = stream.getVideoTracks()[0];
+      // Give the frame a moment to settle
+      await new Promise(r => setTimeout(r, 120));
+      const ic = new ImageCapture(track);
+      const bmp = await ic.grabFrame();
+      track.stop();
+      const cvs = document.createElement('canvas');
+      cvs.width = bmp.width; cvs.height = bmp.height;
+      cvs.getContext('2d').drawImage(bmp, 0, 0);
+      cvs.toBlob(blob => {
+        downloadBlob(blob, landmarkName);
+        showToast('✦ Saved to downloads');
+      }, 'image/png');
+      return;
+    } catch (e) { /* user denied or unsupported */ }
+  }
+
+  /* Strategy 4 – iOS / system AR (USDZ Quick Look): instruct user */
+  // On iOS the AR view is a system-level UIKit overlay; JS can't reach it.
+  // The best UX is to prompt the user to use the native screenshot gesture.
+  showToast(IS_IOS
+    ? '📸 Press Side + Volume Up to capture'
+    : '📸 Use your device screenshot button', 3800);
+}
+
+function downloadBlob(blob, name) {
+  const url  = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href     = url;
+  link.download = `${name}-AR-${Date.now()}.png`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+}
+
+arShutterBtn.addEventListener('click', () => captureARScreen(activeARName));
+
+/* ── Build cards ── */
+LANDMARKS.forEach((lm, idx) => {
+  const base     = `./ExploreKorea/${lm.folder}/${lm.file}`;
+  const glbPath  = `${base}.glb`;
+  const usdzPath = `${base}.usdz`;
+  const imgPath  = `${base}.png`;
+  const s        = (lm.arScale || 1).toFixed(6);
+
+  const arModes = IS_IOS
+    ? 'quick-look webxr scene-viewer'
+    : 'webxr scene-viewer quick-look';
+
+  const card = document.createElement('div');
+  card.className   = 'landmark-card';
+  card.dataset.idx = idx;
+
+  card.innerHTML = `
+    <div class="model-wrap" id="wrap-${idx}">
+
+      <img class="model-poster"
+           src="${imgPath}" alt="${lm.name}"
+           ${idx === 0 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"'}
+           decoding="async"
+           onerror="this.style.opacity='.1'">
+
+      <model-viewer
+        id="mv-${idx}"
+        src="${glbPath}"
+        ${IS_IOS ? `ios-src="${usdzPath}"` : ''}
+
+        ar
+        ar-modes="${arModes}"
+        ar-placement="floor"
+        ar-scale="auto"
+
+        camera-controls
+        interaction-prompt="auto"
+        interaction-prompt-style="wiggle"
+
+        xr-environment
+
+        min-camera-orbit="auto auto 40%"
+        max-camera-orbit="auto auto 900%"
+
+        min-field-of-view="20deg"
+        max-field-of-view="90deg"
+
+        touch-action="none"
+
+        camera-orbit="${lm.orbit}"
+        scale="${s} ${s} ${s}"
+        style="--ar-scale:${s}; touch-action:none;"
+      >
+        <button slot="ar-button" aria-hidden="true" style="display:none"></button>
+      </model-viewer>
+
+      <!-- shutter flash for 3D mode -->
+      <div class="shutter-flash" id="flash-${idx}"></div>
+
+      <div class="loading-overlay show" id="loader-${idx}">
+        <div class="loader-ring"></div>
+        <div class="loader-bar-track">
+          <div class="loader-bar-fill" id="bar-${idx}"></div>
+        </div>
+        <div class="loader-label" id="lbl-${idx}">Loading model…</div>
+      </div>
+
+      <div class="error-overlay" id="err-${idx}">
+        <div class="error-icon">⚠︎</div>
+        <div class="error-msg" id="errmsg-${idx}">Model unavailable</div>
+        <button class="retry-btn" id="retry-${idx}">↺ Retry</button>
+      </div>
+
+      <div class="ar-badge" id="badge-${idx}">✦ AR Ready</div>
+
+      <!-- 3D mode capture button -->
+      <button class="capture-btn" id="capture-${idx}" aria-label="Screenshot 3D model" title="Screenshot">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+          <circle cx="12" cy="13" r="4"/>
+        </svg>
+      </button>
+
+      <div class="pinch-hint">⟺ Pinch to Scale · Drag to Rotate · AR Ready</div>
+      <div class="ar-no-support" id="nosup-${idx}">AR not available on this device</div>
+    </div>
+
+    <div class="landmark-info">
+      <div class="landmark-name">${lm.name}</div>
+      <div class="landmark-city">${lm.city}</div>
+      <div class="btn-row">
+        <button class="action-btn btn-3d" id="btn3d-${idx}">⬡ 3D</button>
+        <button class="action-btn btn-ar loading" id="btnar-${idx}" disabled>⏳ Loading…</button>
+      </div>
+    </div>`;
+
+  grid.appendChild(card);
+
+  const dot = document.createElement('div');
+  dot.className = 'dot' + (idx === 0 ? ' active' : '');
+  dotsEl.appendChild(dot);
+
+  const mv         = card.querySelector(`#mv-${idx}`);
+  const loader     = card.querySelector(`#loader-${idx}`);
+  const bar        = card.querySelector(`#bar-${idx}`);
+  const lbl        = card.querySelector(`#lbl-${idx}`);
+  const errBox     = card.querySelector(`#err-${idx}`);
+  const errmsg     = card.querySelector(`#errmsg-${idx}`);
+  const retryBtn   = card.querySelector(`#retry-${idx}`);
+  const badge      = card.querySelector(`#badge-${idx}`);
+  const nosup      = card.querySelector(`#nosup-${idx}`);
+  const wrap       = card.querySelector(`#wrap-${idx}`);
+  const btn3d      = card.querySelector(`#btn3d-${idx}`);
+  const captureBtn = card.querySelector(`#capture-${idx}`);
+  const flashEl    = card.querySelector(`#flash-${idx}`);
+  const btnAR      = card.querySelector(`#btnar-${idx}`);
+
+  let modelReady = false;
+
+  mv.addEventListener('progress', e => {
+    const pct = Math.round((e.detail.totalProgress || 0) * 100);
+    bar.style.width = pct + '%';
+    lbl.textContent = `Loading ${pct}%`;
+  });
+
+  mv.addEventListener('load', () => {
+    modelReady = true;
+    loader.classList.remove('show');
+    errBox.classList.remove('show');
+    badge.classList.add('visible');
+    btnAR.disabled = false;
+    btnAR.classList.remove('loading', 'error');
+    if (mv.canActivateAR) {
+      btnAR.textContent = '🪐 View in Real World';
+    } else {
+      btnAR.textContent = 'AR Unavailable';
+      btnAR.classList.add('error');
+      btnAR.disabled = true;
+      nosup.style.display = 'block';
+    }
+  });
+
+  mv.addEventListener('error', () => {
+    modelReady = false;
+    loader.classList.remove('show');
+    fetch(glbPath, { method: 'HEAD' })
+      .then(r => { errmsg.textContent = r.ok ? 'File may be corrupted' : `File not found (${r.status})`; })
+      .catch(() => { errmsg.textContent = 'Serve via localhost — not file://'; });
+    errBox.classList.add('show');
+    btnAR.disabled = true;
+    btnAR.classList.remove('loading');
+    btnAR.classList.add('error');
+    btnAR.textContent = '⚠ Unavailable';
+  });
+
+  /* AR session events — show/hide the floating capture overlay */
+  mv.addEventListener('ar-status', e => {
+    const st = e.detail.status;
+
+    if (st === 'session-started') {
+      activeARViewer = mv;
+      activeARName   = lm.name;
+      arOverlay.classList.add('ar-active');
+      mv.style.touchAction = 'none';
+      showToast('📸 Tap the button to capture AR');
+    }
+
+    if (st === 'not-presenting') {
+      arOverlay.classList.remove('ar-active');
+      activeARViewer = null;
+      btnAR.disabled = false;
+      btnAR.textContent = '🪐 View in Real World';
+    }
+
+    if (st === 'failed') {
+      arOverlay.classList.remove('ar-active');
+      activeARViewer = null;
+      btnAR.disabled = false;
+      btnAR.textContent = '⚠ AR Failed — Retry';
+    }
+  });
+
+  wrap.addEventListener('touchstart', e => {
+    if (wrap.classList.contains('active') && e.touches.length > 1) {
+      e.stopPropagation();
+    }
+  }, { passive: true });
+
+  retryBtn.addEventListener('click', () => {
+    errBox.classList.remove('show');
+    btnAR.disabled = true;
+    btnAR.classList.remove('error');
+    btnAR.classList.add('loading');
+    btnAR.textContent = '⏳ Loading…';
+    loader.classList.add('show');
+    bar.style.width = '0%';
+    lbl.textContent = 'Loading model…';
+    const src = mv.getAttribute('src');
+    mv.removeAttribute('src');
+    requestAnimationFrame(() => mv.setAttribute('src', src));
+  });
+
+  btn3d.addEventListener('click', () => {
+    const active = wrap.classList.toggle('active');
+    btn3d.classList.toggle('is-active', active);
+    btn3d.textContent = active ? '✕ 2D' : '⬡ 3D';
+  });
+
+  /* 3D mode screenshot – grabs the WebGL canvas */
+  captureBtn.addEventListener('click', async () => {
+    // flash feedback
+    flashEl.classList.remove('fire');
+    void flashEl.offsetWidth;
+    flashEl.classList.add('fire');
+
+    try {
+      const sr = mv.shadowRoot;
+      const canvas = sr && (sr.querySelector('canvas[aria-hidden]') || sr.querySelector('canvas'));
+      if (!canvas || canvas.width === 0) throw new Error('no canvas');
+
+      canvas.toBlob(blob => {
+        if (!blob) { showToast('⚠ Screenshot failed'); return; }
+        downloadBlob(blob, lm.name);
+        showToast('✦ 3D snapshot saved');
+      }, 'image/png');
+    } catch (err) {
+      console.warn('3D capture:', err);
+      showToast('⚠ Screenshot unavailable');
+    }
+  });
+
+  btnAR.addEventListener('click', () => {
+    if (!modelReady || btnAR.disabled) return;
+    if (!mv.canActivateAR) { nosup.style.display = 'block'; return; }
+    try { mv.activateAR(); } catch (e) { console.warn('activateAR error:', e); }
+  });
+});
+
+/* ── Scroll dots ── */
+const allDots = dotsEl.querySelectorAll('.dot');
+let rafPending = false;
+
+grid.addEventListener('scroll', () => {
+  if (rafPending) return;
+  rafPending = true;
+  requestAnimationFrame(() => {
+    rafPending = false;
+    const cx = grid.scrollLeft + grid.clientWidth / 2;
+    let best = 0, bestDist = Infinity;
+    grid.querySelectorAll('.landmark-card').forEach((c, ci) => {
+      const d = Math.abs(c.offsetLeft + c.offsetWidth / 2 - cx);
+      if (d < bestDist) { bestDist = d; best = ci; }
+    });
+    allDots.forEach((d, di) => d.classList.toggle('active', di === best));
+  });
+}, { passive: true });
+</script>
+
+</body>
+</html>
