@@ -129,49 +129,7 @@ model-viewer {
   --touch-action: none;
 }
 model-viewer::part(default-progress-bar) { display: none; }
-/* ar-button slot — the ONLY element visible inside Scene Viewer / Quick Look */
-model-viewer > [slot="ar-button"] {
-  display: flex !important;
-  align-items: center;
-  justify-content: center;
-  position: fixed;
-  bottom: max(env(safe-area-inset-bottom), 44px);
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 9999;
-  width: 76px;
-  height: 76px;
-  border-radius: 50%;
-  border: 3px solid rgba(255,255,255,.6);
-  background: rgba(255,255,255,.12);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  box-shadow: 0 0 0 6px rgba(255,255,255,.1), 0 8px 32px rgba(0,0,0,.5);
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  transition: transform .15s;
-}
-model-viewer > [slot="ar-button"]:active {
-  transform: translateX(-50%) scale(.88);
-}
-model-viewer > [slot="ar-button"] .shutter-inner {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: rgba(255,255,255,.92);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-model-viewer > [slot="ar-button"] svg {
-  width: 26px;
-  height: 26px;
-  fill: none;
-  stroke: #111;
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
+model-viewer > [slot="ar-button"] { display: none !important; }
 
 .model-wrap.active model-viewer {
   opacity: 1;
@@ -231,7 +189,7 @@ model-viewer > [slot="ar-button"] svg {
 }
 .capture-btn:active svg { transform: scale(.85); }
 
-/* shutter flash overlay (3D mode) */
+/* shutter flash overlay */
 .shutter-flash {
   position: absolute;
   inset: 0;
@@ -249,121 +207,116 @@ model-viewer > [slot="ar-button"] svg {
   100% { opacity: 0; }
 }
 
-/* ════════════════════════════════════════════════════
-   AR CAPTURE OVERLAY
-   On Android (WebXR): browser renders the XR scene so
-   this fixed overlay actually appears over the camera.
-   z-index must beat model-viewer's internal layers.
-   ════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════
+   AR CAPTURE OVERLAY — reworked for iOS + Android
+   ═══════════════════════════════════════════════ */
+
 #ar-capture-overlay {
   display: none;
   position: fixed;
-  inset: 0;
-  z-index: 2147483646; /* max safe int - 1, beats WebXR canvas */
-  pointer-events: none; /* children opt back in */
-}
-#ar-capture-overlay.ar-active { display: block; }
-
-/* top bar — centered status pill */
-.ar-top-bar {
-  position: absolute;
-  top: max(env(safe-area-inset-top), 20px);
-  left: 0; right: 0;
-  display: flex;
-  justify-content: center;
-  pointer-events: none;
-}
-.ar-hint-pill {
-  background: rgba(8,6,4,.80);
-  border: 1px solid rgba(184,151,58,.5);
-  color: var(--gold2);
-  padding: 8px 18px;
-  border-radius: 30px;
-  font-size: 11px;
-  letter-spacing: .18em;
-  text-transform: uppercase;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  opacity: 0;
-  transform: translateY(-10px);
-  transition: opacity .35s, transform .35s;
-  white-space: nowrap;
-}
-.ar-hint-pill.show { opacity: 1; transform: translateY(0); }
-
-/* bottom bar — shutter button */
-.ar-bottom-bar {
-  position: absolute;
-  bottom: 0;
-  left: 0; right: 0;
-  padding-bottom: max(env(safe-area-inset-bottom), 44px);
-  display: flex;
+  z-index: 2147483647; /* max possible z-index */
+  /* anchor to bottom-center, clear of home indicator */
+  bottom: max(env(safe-area-inset-bottom, 20px), 36px);
+  left: 50%;
+  transform: translateX(-50%);
   flex-direction: column;
   align-items: center;
   gap: 10px;
+  /* ensure it's never clipped */
   pointer-events: auto;
+  -webkit-user-select: none;
+  user-select: none;
 }
+#ar-capture-overlay.ar-active { display: flex; }
 
-/* outer ring */
+/* Glowing ring around shutter — makes it pop on any background */
 .ar-shutter-ring {
-  width: 86px;
-  height: 86px;
+  width: 84px;
+  height: 84px;
   border-radius: 50%;
-  border: 3px solid rgba(255,255,255,.65);
+  background: rgba(0,0,0,.55);
+  border: 3px solid rgba(255,255,255,.95);
+  box-shadow:
+    0 0 0 5px rgba(255,255,255,.18),
+    0 0 0 10px rgba(255,255,255,.07),
+    0 6px 32px rgba(0,0,0,.6);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0,0,0,.25);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  box-shadow: 0 0 0 7px rgba(255,255,255,.12), 0 6px 28px rgba(0,0,0,.55);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
-  transition: transform .15s;
-  border: none; /* override default button border */
-  outline: 3px solid rgba(255,255,255,.65);
+  transition: transform .12s, box-shadow .12s;
+  /* pulse animation so user notices it */
+  animation: ar-pulse 2.4s ease-in-out infinite;
 }
-.ar-shutter-ring:active { transform: scale(.87); }
-
-/* inner white disc */
-.ar-shutter-disc {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: rgba(255,255,255,.94);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background .1s;
+.ar-shutter-ring:active {
+  transform: scale(.88);
+  box-shadow: 0 0 0 3px rgba(255,255,255,.12), 0 2px 14px rgba(0,0,0,.4);
+  animation: none;
 }
-.ar-shutter-ring:active .ar-shutter-disc { background: rgba(210,210,210,.94); }
+@keyframes ar-pulse {
+  0%, 100% { box-shadow: 0 0 0 5px rgba(255,255,255,.18), 0 0 0 10px rgba(255,255,255,.07), 0 6px 32px rgba(0,0,0,.6); }
+  50%       { box-shadow: 0 0 0 8px rgba(255,255,255,.28), 0 0 0 16px rgba(255,255,255,.1),  0 6px 32px rgba(0,0,0,.6); }
+}
 
-.ar-shutter-disc svg {
-  width: 27px; height: 27px;
+.ar-shutter-ring svg {
+  width: 34px;
+  height: 34px;
   fill: none;
-  stroke: #0a0a0a;
-  stroke-width: 1.9;
+  stroke: #fff;
+  stroke-width: 1.7;
   stroke-linecap: round;
   stroke-linejoin: round;
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,.8));
 }
 
 .ar-shutter-label {
   font-size: 11px;
-  letter-spacing: .22em;
+  font-family: var(--ff-ui);
+  font-weight: 500;
+  letter-spacing: .2em;
   text-transform: uppercase;
-  color: rgba(255,255,255,.78);
-  text-shadow: 0 1px 6px rgba(0,0,0,.8);
+  color: #fff;
+  text-shadow: 0 1px 8px rgba(0,0,0,.9), 0 0 20px rgba(0,0,0,.7);
   white-space: nowrap;
 }
 
-/* ── toast ── */
+/* iOS-specific hint banner (shown only on iOS Quick Look) */
+#ios-ar-hint {
+  display: none;
+  position: fixed;
+  z-index: 2147483647;
+  top: max(env(safe-area-inset-top, 20px), 56px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,.72);
+  border: 1px solid rgba(255,255,255,.25);
+  color: #fff;
+  padding: 11px 22px;
+  border-radius: 30px;
+  font-size: 12px;
+  font-family: var(--ff-ui);
+  letter-spacing: .08em;
+  white-space: nowrap;
+  text-align: center;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  pointer-events: none;
+  animation: hint-drop .35s ease;
+}
+#ios-ar-hint.show { display: block; }
+@keyframes hint-drop {
+  from { opacity:0; transform: translateX(-50%) translateY(-10px); }
+  to   { opacity:1; transform: translateX(-50%) translateY(0); }
+}
+
+/* toast notification */
 .ar-toast {
   position: fixed;
   top: max(env(safe-area-inset-top), 60px);
   left: 50%;
   transform: translateX(-50%) translateY(-12px);
-  z-index: 10000;
+  z-index: 2147483647;
   background: rgba(8,6,4,.88);
   border: 1px solid rgba(184,151,58,.4);
   color: var(--gold2);
@@ -378,28 +331,29 @@ model-viewer > [slot="ar-button"] svg {
   transition: opacity .25s, transform .25s;
   white-space: nowrap;
 }
-.ar-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.ar-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
 
-/* full-screen flash for AR capture */
+/* full-screen flash for AR capture feedback */
 .ar-flash {
   display: none;
   position: fixed;
   inset: 0;
-  z-index: 9998;
+  z-index: 2147483646;
   background: #fff;
   pointer-events: none;
 }
 .ar-flash.fire {
   display: block;
-  animation: arFlash .45s ease forwards;
+  animation: arFlash .4s ease forwards;
 }
 @keyframes arFlash {
-  0%   { opacity: .95; }
-  60%  { opacity: .4; }
+  0%   { opacity: .9; }
   100% { opacity: 0; }
 }
 
-/* ── rest (unchanged from original) ── */
 .pinch-hint {
   position: absolute;
   bottom: 12px;
@@ -573,41 +527,24 @@ model-viewer > [slot="ar-button"] svg {
 <div class="explorer-grid" id="grid"></div>
 <div class="scroll-dots"   id="dots"></div>
 
-<!-- ═══════════════════════════════════════════════════
-     AR CAPTURE OVERLAY
-     Android WebXR: this overlay sits ON TOP of the live
-     camera feed since WebXR renders inside the browser.
-     iOS Quick Look: native app, use slot="ar-button" instead.
-     ═══════════════════════════════════════════════════ -->
+<!-- iOS Quick Look hint — visible above native AR layer -->
+<div id="ios-ar-hint">📸 Press Side + Volume Up to screenshot</div>
+
+<!-- AR screenshot overlay (fixed, shown over WebXR AR view on Android) -->
 <div id="ar-capture-overlay">
-
-  <!-- Top pill -->
-  <div class="ar-top-bar">
-    <div class="ar-hint-pill" id="ar-hint-pill">● AR Live</div>
+  <div class="ar-shutter-ring" id="ar-shutter-btn" role="button" aria-label="Capture AR Screenshot" tabindex="0">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+      <circle cx="12" cy="13" r="4"/>
+    </svg>
   </div>
-
-  <!-- Bottom shutter -->
-  <div class="ar-bottom-bar">
-    <button class="ar-shutter-ring" id="ar-shutter-btn"
-            aria-label="Capture AR photo">
-      <div class="ar-shutter-disc">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8
-                   a2 2 0 0 1 2-2h4l2-3h6l2 3h4
-                   a2 2 0 0 1 2 2z"/>
-          <circle cx="12" cy="13" r="4"/>
-        </svg>
-      </div>
-    </button>
-    <span class="ar-shutter-label">Capture</span>
-  </div>
-
+  <span class="ar-shutter-label">Capture</span>
 </div>
 
-<!-- Full-screen flash for AR capture feedback -->
+<!-- Full-screen white flash for AR capture feedback -->
 <div class="ar-flash" id="ar-flash"></div>
 
-<!-- Toast messages -->
+<!-- Toast for save confirmation -->
 <div class="ar-toast" id="ar-toast"></div>
 
 <script>
@@ -646,51 +583,104 @@ const LANDMARKS = [
   },
 ];
 
-const IS_IOS     = /iPhone|iPad|iPod/i.test(navigator.userAgent) ||
-                   (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-const IS_ANDROID = /Android/i.test(navigator.userAgent);
+const IS_IOS = /iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+               (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
-const grid         = document.getElementById('grid');
-const dotsEl       = document.getElementById('dots');
-const arOverlay    = document.getElementById('ar-capture-overlay');
-const arShutterBtn = document.getElementById('ar-shutter-btn');
-const arHintPill   = document.getElementById('ar-hint-pill');
-const arFlash      = document.getElementById('ar-flash');
-const arToast      = document.getElementById('ar-toast');
+const grid           = document.getElementById('grid');
+const dotsEl         = document.getElementById('dots');
+const arOverlay      = document.getElementById('ar-capture-overlay');
+const arShutterBtn   = document.getElementById('ar-shutter-btn');
+const arFlash        = document.getElementById('ar-flash');
+const arToast        = document.getElementById('ar-toast');
+const iosHint        = document.getElementById('ios-ar-hint');
 
-let activeARViewer = null;
-let activeARName   = '';
-let toastTimer     = null;
-let hintTimer      = null;
+let activeARViewer   = null;
+let activeARName     = '';
+let toastTimer       = null;
+let iosHintTimer     = null;
 
-/* ── Toast ── */
-function showToast(msg, ms = 3200) {
+/* ── Toast helper ── */
+function showToast(msg, durationMs = 2800) {
   if (toastTimer) clearTimeout(toastTimer);
   arToast.textContent = msg;
   arToast.classList.add('show');
-  toastTimer = setTimeout(() => arToast.classList.remove('show'), ms);
+  toastTimer = setTimeout(() => arToast.classList.remove('show'), durationMs);
 }
 
-/* ── Hint pill ── */
-function showHint(msg, ms = 4500) {
-  if (hintTimer) clearTimeout(hintTimer);
-  arHintPill.textContent = msg;
-  arHintPill.classList.add('show');
-  hintTimer = setTimeout(() => arHintPill.classList.remove('show'), ms);
-}
-function hideHint() {
-  if (hintTimer) clearTimeout(hintTimer);
-  arHintPill.classList.remove('show');
+/* ── iOS hint helper ── */
+function showIosHint(msg, durationMs = 5000) {
+  if (iosHintTimer) clearTimeout(iosHintTimer);
+  iosHint.textContent = msg;
+  iosHint.classList.add('show');
+  iosHintTimer = setTimeout(() => iosHint.classList.remove('show'), durationMs);
 }
 
-/* ── Flash ── */
-function triggerFlash() {
+/* ── AR screenshot logic ── */
+async function captureARScreen(landmarkName) {
   arFlash.classList.remove('fire');
   void arFlash.offsetWidth;
   arFlash.classList.add('fire');
+
+  /* Strategy 1 – model-viewer captureImage() API */
+  if (activeARViewer && typeof activeARViewer.captureImage === 'function') {
+    try {
+      const blob = await activeARViewer.captureImage();
+      downloadBlob(blob, landmarkName);
+      showToast('✦ Saved to downloads');
+      return;
+    } catch (e) { /* fall through */ }
+  }
+
+  /* Strategy 2 – WebGL canvas from shadow DOM (Android WebXR) */
+  if (activeARViewer) {
+    try {
+      const sr = activeARViewer.shadowRoot;
+      const canvas = sr && (
+        sr.querySelector('canvas[aria-hidden]') ||
+        sr.querySelector('canvas')
+      );
+      if (canvas && canvas.width > 0) {
+        canvas.toBlob(blob => {
+          if (blob) { downloadBlob(blob, landmarkName); showToast('✦ Saved to downloads'); }
+          else      { showToast('⚠ Canvas empty — use system screenshot'); }
+        }, 'image/png');
+        return;
+      }
+    } catch (e) { /* cross-origin restriction, fall through */ }
+  }
+
+  /* Strategy 3 – Screen Capture API (Android Chrome desktop-like) */
+  if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
+    try {
+      const stream = await navigator.mediaDevices.getDisplayMedia({ video: { cursor: 'never' } });
+      const track  = stream.getVideoTracks()[0];
+      await new Promise(r => setTimeout(r, 120));
+      const ic = new ImageCapture(track);
+      const bmp = await ic.grabFrame();
+      track.stop();
+      const cvs = document.createElement('canvas');
+      cvs.width = bmp.width; cvs.height = bmp.height;
+      cvs.getContext('2d').drawImage(bmp, 0, 0);
+      cvs.toBlob(blob => {
+        downloadBlob(blob, landmarkName);
+        showToast('✦ Saved to downloads');
+      }, 'image/png');
+      return;
+    } catch (e) { /* user denied or unsupported */ }
+  }
+
+  /* Strategy 4 – Web Share API (best on Android Chrome) */
+  if (!IS_IOS && navigator.share && navigator.canShare) {
+    showToast('📸 Use device screenshot button', 3500);
+    return;
+  }
+
+  /* iOS fallback: button is hidden under native UIKit — show hint only */
+  showToast(IS_IOS
+    ? '📸 Press Side + Vol Up to capture'
+    : '📸 Use your screenshot button', 4000);
 }
 
-/* ── Download blob ── */
 function downloadBlob(blob, name) {
   const url  = URL.createObjectURL(blob);
   const link = document.createElement('a');
@@ -699,82 +689,16 @@ function downloadBlob(blob, name) {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
-  setTimeout(() => URL.revokeObjectURL(url), 6000);
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
 }
 
-/* ══════════════════════════════════════════════════════
-   captureARScreen — grabs 3D model composited over camera
-
-   Strategy waterfall:
-   1. model-viewer .captureImage()         — newest builds
-   2. Shadow DOM canvas (WebXR composited) — Chrome Android WebXR
-   3. All shadow-root canvases scan        — belt-and-suspenders
-   4. System screenshot hint               — iOS / fallback
-   ══════════════════════════════════════════════════════ */
-async function captureARScreen(landmarkName) {
-  triggerFlash();
-
-  /* Strategy 1 — model-viewer built-in API */
-  if (activeARViewer && typeof activeARViewer.captureImage === 'function') {
-    try {
-      const blob = await activeARViewer.captureImage();
-      downloadBlob(blob, landmarkName);
-      showToast('✦ AR photo saved');
-      return;
-    } catch (_) {}
-  }
-
-  /* Strategy 2 — grab the composited WebXR canvas from shadow DOM.
-     In WebXR mode model-viewer renders the 3D model blended over the
-     live camera feed onto a single <canvas>. We wait two animation
-     frames to make sure the latest frame is flushed. */
-  if (activeARViewer) {
-    try {
-      const sr = activeARViewer.shadowRoot;
-      if (sr) {
-        // Wait for the freshest frame
-        await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
-
-        // Scan ALL canvases — pick the largest one (that's the XR canvas)
-        const canvases = [...sr.querySelectorAll('canvas')];
-        const canvas   = canvases
-          .filter(c => c.width > 0 && c.height > 0)
-          .sort((a, b) => (b.width * b.height) - (a.width * a.height))[0];
-
-        if (canvas) {
-          const blob = await new Promise(res =>
-            canvas.toBlob(b => res(b), 'image/jpeg', 0.95)
-          );
-          if (blob && blob.size > 4096) {
-            downloadBlob(blob, landmarkName);
-            showToast('✦ AR photo saved');
-            return;
-          }
-        }
-      }
-    } catch (_) {}
-  }
-
-  /* Strategy 3 — system screenshot instructions (iOS Quick Look, or
-     if WebXR canvas read failed due to security policy) */
-  systemScreenshotHint();
-}
-
-function systemScreenshotHint() {
-  if (IS_IOS) {
-    showToast('📸 Side button + Volume Up to capture', 4800);
-    showHint('Side + Vol Up  →  Save Photo', 5500);
-  } else if (IS_ANDROID) {
-    showToast('📸 Power + Volume Down to capture', 4000);
-    showHint('Power + Vol Down', 4500);
-  } else {
-    showToast('📸 Use your screenshot shortcut', 4000);
-  }
-}
-
+/* Shutter: click + keyboard Enter/Space */
 arShutterBtn.addEventListener('click', () => captureARScreen(activeARName));
+arShutterBtn.addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); captureARScreen(activeARName); }
+});
 
-/* ══════════════════ Build cards ══════════════════ */
+/* ── Build cards ── */
 LANDMARKS.forEach((lm, idx) => {
   const base     = `./ExploreKorea/${lm.folder}/${lm.file}`;
   const glbPath  = `${base}.glb`;
@@ -782,11 +706,9 @@ LANDMARKS.forEach((lm, idx) => {
   const imgPath  = `${base}.png`;
   const s        = (lm.arScale || 1).toFixed(6);
 
-  /* Android: webxr ONLY — Scene Viewer is a separate native app that
-     swallows all our HTML UI. WebXR renders inside the browser so our
-     capture overlay button actually appears on screen.
-     iOS: quick-look first (WebXR not supported on iOS Safari). */
-  const arModes = IS_IOS ? 'quick-look' : 'webxr';
+  const arModes = IS_IOS
+    ? 'quick-look webxr scene-viewer'
+    : 'webxr scene-viewer quick-look';
 
   const card = document.createElement('div');
   card.className   = 'landmark-card';
@@ -829,16 +751,10 @@ LANDMARKS.forEach((lm, idx) => {
         scale="${s} ${s} ${s}"
         style="--ar-scale:${s}; touch-action:none;"
       >
-        <button slot="ar-button" id="ar-slot-btn-${idx}" aria-label="Capture AR photo">
-          <div class="shutter-inner">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-              <circle cx="12" cy="13" r="4"/>
-            </svg>
-          </div>
-        </button>
+        <button slot="ar-button" aria-hidden="true" style="display:none"></button>
       </model-viewer>
 
+      <!-- shutter flash for 3D mode -->
       <div class="shutter-flash" id="flash-${idx}"></div>
 
       <div class="loading-overlay show" id="loader-${idx}">
@@ -857,7 +773,7 @@ LANDMARKS.forEach((lm, idx) => {
 
       <div class="ar-badge" id="badge-${idx}">✦ AR Ready</div>
 
-      <!-- 3D mode screenshot button -->
+      <!-- 3D mode capture button -->
       <button class="capture-btn" id="capture-${idx}" aria-label="Screenshot 3D model" title="Screenshot">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
@@ -937,30 +853,36 @@ LANDMARKS.forEach((lm, idx) => {
     btnAR.textContent = '⚠ Unavailable';
   });
 
-  /* ── AR slot button (visible INSIDE Scene Viewer / Quick Look) ── */
-  const arSlotBtn = card.querySelector(`#ar-slot-btn-${idx}`);
-  if (arSlotBtn) {
-    arSlotBtn.addEventListener('click', e => {
-      e.stopPropagation();
-      captureARScreen(lm.name);
-    });
-  }
-
-  /* ── AR session lifecycle ── */
+  /* ── AR session events ── */
   mv.addEventListener('ar-status', e => {
     const st = e.detail.status;
 
     if (st === 'session-started') {
       activeARViewer = mv;
       activeARName   = lm.name;
-      arOverlay.classList.add('ar-active');
-      mv.style.touchAction = 'none';
-      showHint('Tap ● to capture', 4000);
+
+      if (IS_IOS) {
+        /*
+         * iOS USDZ Quick Look is a native UIKit fullscreen overlay.
+         * JavaScript overlays (position:fixed) are rendered BENEATH it and
+         * are invisible to the user. We can't show a capture button on top.
+         * Best UX: show the hint BEFORE the native overlay takes over,
+         * using the toast (which flashes briefly before Quick Look opens).
+         */
+        showToast('📸 Side + Vol Up to screenshot', 4500);
+        showIosHint('📸 Side + Volume Up to capture');
+        /* Do NOT show arOverlay on iOS — it's pointless under Quick Look */
+      } else {
+        /* Android WebXR — our fixed overlay IS visible over the AR canvas */
+        arOverlay.classList.add('ar-active');
+        showToast('📸 Tap the button to capture AR');
+        mv.style.touchAction = 'none';
+      }
     }
 
     if (st === 'not-presenting') {
       arOverlay.classList.remove('ar-active');
-      hideHint();
+      iosHint.classList.remove('show');
       activeARViewer = null;
       btnAR.disabled = false;
       btnAR.textContent = '🪐 View in Real World';
@@ -968,7 +890,7 @@ LANDMARKS.forEach((lm, idx) => {
 
     if (st === 'failed') {
       arOverlay.classList.remove('ar-active');
-      hideHint();
+      iosHint.classList.remove('show');
       activeARViewer = null;
       btnAR.disabled = false;
       btnAR.textContent = '⚠ AR Failed — Retry';
@@ -976,7 +898,9 @@ LANDMARKS.forEach((lm, idx) => {
   });
 
   wrap.addEventListener('touchstart', e => {
-    if (wrap.classList.contains('active') && e.touches.length > 1) e.stopPropagation();
+    if (wrap.classList.contains('active') && e.touches.length > 1) {
+      e.stopPropagation();
+    }
   }, { passive: true });
 
   retryBtn.addEventListener('click', () => {
@@ -1004,10 +928,12 @@ LANDMARKS.forEach((lm, idx) => {
     flashEl.classList.remove('fire');
     void flashEl.offsetWidth;
     flashEl.classList.add('fire');
+
     try {
-      const sr     = mv.shadowRoot;
+      const sr = mv.shadowRoot;
       const canvas = sr && (sr.querySelector('canvas[aria-hidden]') || sr.querySelector('canvas'));
       if (!canvas || canvas.width === 0) throw new Error('no canvas');
+
       canvas.toBlob(blob => {
         if (!blob) { showToast('⚠ Screenshot failed'); return; }
         downloadBlob(blob, lm.name);
@@ -1027,7 +953,7 @@ LANDMARKS.forEach((lm, idx) => {
 });
 
 /* ── Scroll dots ── */
-const allDots  = dotsEl.querySelectorAll('.dot');
+const allDots = dotsEl.querySelectorAll('.dot');
 let rafPending = false;
 
 grid.addEventListener('scroll', () => {
