@@ -580,25 +580,66 @@ LANDMARKS.forEach((lm, idx) => {
   });
 
   captureBtn.addEventListener('click', async () => {
-    try {
-      const canvas = document.createElement('canvas');
-      const scale  = window.devicePixelRatio || 2;
-      canvas.width  = mv.clientWidth  * scale;
-      canvas.height = mv.clientHeight * scale;
-      const ctx = canvas.getContext('2d');
-      ctx.scale(scale, scale);
-      const internalCanvas = mv.shadowRoot.querySelector('canvas');
-      if (!internalCanvas) { alert('Screenshot not available'); return; }
-      ctx.drawImage(internalCanvas, 0, 0);
-      const link = document.createElement('a');
-      link.download = `${lm.name}-AR.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-    } catch (err) {
-      console.error(err);
-      alert('Screenshot failed');
+
+  // If AR session is active
+  if (mv.xrSession || document.fullscreenElement) {
+
+    // Mobile native AR viewers cannot be captured directly
+    alert(
+      'To capture the AR view:\n\n' +
+      'Android → Press Volume Down + Power\n' +
+      'iPhone → Press Side Button + Volume Up'
+    );
+
+    return;
+  }
+
+  // Normal 3D viewer screenshot
+  try {
+
+    const canvas = document.createElement('canvas');
+    const scale = window.devicePixelRatio || 2;
+
+    canvas.width = mv.clientWidth * scale;
+    canvas.height = mv.clientHeight * scale;
+
+    const ctx = canvas.getContext('2d');
+    ctx.scale(scale, scale);
+
+    const internalCanvas =
+      mv.shadowRoot.querySelector('canvas');
+
+    if (!internalCanvas) {
+      alert('Screenshot not available');
+      return;
     }
-  });
+
+    ctx.drawImage(
+      internalCanvas,
+      0,
+      0,
+      mv.clientWidth,
+      mv.clientHeight
+    );
+
+    const link = document.createElement('a');
+
+    link.download =
+      `${lm.name}-3D-View.png`;
+
+    link.href =
+      canvas.toDataURL('image/png');
+
+    link.click();
+
+  } catch (err) {
+
+    console.error(err);
+    alert('Screenshot failed');
+
+  }
+
+});
 
   btnAR.addEventListener('click', () => {
     if (!modelReady || btnAR.disabled) return;
