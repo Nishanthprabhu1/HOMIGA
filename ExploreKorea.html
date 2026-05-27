@@ -175,6 +175,10 @@ model-viewer > [slot="ar-button"] { display: none !important; }
   pointer-events: none;
   transition: all .3s ease;
 }
+  .capture-btn.ar-visible {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
 .model-wrap.active .capture-btn { opacity: 1; pointer-events: auto; }
 .capture-btn:active { transform: scale(.92); }
 
@@ -538,20 +542,40 @@ LANDMARKS.forEach((lm, idx) => {
     btnAR.textContent = '⚠ Unavailable';
   });
 
-  mv.addEventListener('ar-status', e => {
-    const st = e.detail.status;
-    if (st === 'session-started') {
-      mv.style.touchAction = 'none';
+  captureBtn.addEventListener('click', async () => {
+
+  try {
+
+    const canvas =
+      mv.shadowRoot.querySelector('canvas');
+
+    if (!canvas) {
+      alert('Screenshot not available');
+      return;
     }
-    if (st === 'failed') {
-      btnAR.disabled = false;
-      btnAR.textContent = '⚠ AR Failed — Retry';
-    }
-    if (st === 'not-presenting') {
-      btnAR.disabled = false;
-      btnAR.textContent = '🪐 View in Real World';
-    }
-  });
+
+    const image =
+      canvas.toDataURL('image/png');
+
+    const link =
+      document.createElement('a');
+
+    link.href = image;
+
+    link.download =
+      `${lm.name}-AR-Photo.png`;
+
+    link.click();
+
+  } catch (err) {
+
+    console.error(err);
+
+    alert('Capture failed');
+
+  }
+
+});
 
   wrap.addEventListener('touchstart', e => {
     if (wrap.classList.contains('active') && e.touches.length > 1) {
