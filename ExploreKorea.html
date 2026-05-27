@@ -110,7 +110,6 @@ body {
   z-index: 2;
   transition: opacity .45s;
 }
-
 .model-wrap:not(.active) .model-poster { opacity: 1; }
 .model-wrap.active .model-poster { opacity: 0; }
 
@@ -126,7 +125,6 @@ model-viewer {
   background: transparent;
   --poster-color: transparent;
   touch-action: none;
-  --touch-action: none;
 }
 model-viewer::part(default-progress-bar) { display: none; }
 model-viewer > [slot="ar-button"] { display: none !important; }
@@ -138,8 +136,7 @@ model-viewer > [slot="ar-button"] { display: none !important; }
 
 .ar-badge {
   position: absolute;
-  right: 12px;
-  top: 12px;
+  right: 12px; top: 12px;
   z-index: 8;
   padding: 6px 12px;
   border-radius: 30px;
@@ -154,268 +151,249 @@ model-viewer > [slot="ar-button"] { display: none !important; }
 }
 .ar-badge.visible { opacity: 1; transform: translateY(0); }
 
-/* ── 3D mode capture button ── */
 .capture-btn {
   position: absolute;
-  bottom: 18px;
-  right: 18px;
+  bottom: 18px; right: 18px;
   z-index: 20;
-  width: 52px;
-  height: 52px;
+  width: 52px; height: 52px;
   border-radius: 50%;
   border: 2px solid rgba(255,255,255,.85);
   background: rgba(20,16,10,.55);
   backdrop-filter: blur(14px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   cursor: pointer;
-  opacity: 0;
-  pointer-events: none;
+  opacity: 0; pointer-events: none;
   transition: all .3s ease;
-  overflow: hidden;
 }
 .model-wrap.active .capture-btn { opacity: 1; pointer-events: auto; }
 .capture-btn:active { transform: scale(.88); }
 .capture-btn svg {
-  width: 22px;
-  height: 22px;
-  fill: none;
-  stroke: #fff;
-  stroke-width: 1.6;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  transition: transform .2s;
+  width: 22px; height: 22px;
+  fill: none; stroke: #fff;
+  stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;
 }
-.capture-btn:active svg { transform: scale(.85); }
 
-/* shutter flash overlay */
 .shutter-flash {
-  position: absolute;
-  inset: 0;
-  z-index: 50;
-  background: #fff;
-  opacity: 0;
-  pointer-events: none;
-  border-radius: 18px;
+  position: absolute; inset: 0;
+  z-index: 50; background: #fff;
+  opacity: 0; pointer-events: none; border-radius: 18px;
 }
-.shutter-flash.fire {
-  animation: shutterFire .38s ease forwards;
-}
-@keyframes shutterFire {
-  0%   { opacity: .75; }
-  100% { opacity: 0; }
-}
+.shutter-flash.fire { animation: shutterFire .38s ease forwards; }
+@keyframes shutterFire { 0% { opacity:.75; } 100% { opacity:0; } }
 
-/* ═══════════════════════════════════════════════
-   AR CAPTURE OVERLAY — reworked for iOS + Android
-   ═══════════════════════════════════════════════ */
-
+/* ═══════════════════════════════════════
+   WEBXR CAPTURE OVERLAY
+   Only shown during true WebXR sessions
+   (not Scene Viewer / Quick Look)
+   ═══════════════════════════════════════ */
 #ar-capture-overlay {
   display: none;
   position: fixed;
-  z-index: 2147483647; /* max possible z-index */
-  /* anchor to bottom-center, clear of home indicator */
-  bottom: max(env(safe-area-inset-bottom, 20px), 36px);
+  z-index: 2147483647;
+  bottom: max(env(safe-area-inset-bottom, 24px), 40px);
   left: 50%;
   transform: translateX(-50%);
   flex-direction: column;
   align-items: center;
   gap: 10px;
-  /* ensure it's never clipped */
   pointer-events: auto;
-  -webkit-user-select: none;
-  user-select: none;
 }
 #ar-capture-overlay.ar-active { display: flex; }
 
-/* Glowing ring around shutter — makes it pop on any background */
 .ar-shutter-ring {
-  width: 84px;
-  height: 84px;
+  width: 84px; height: 84px;
   border-radius: 50%;
-  background: rgba(0,0,0,.55);
-  border: 3px solid rgba(255,255,255,.95);
-  box-shadow:
-    0 0 0 5px rgba(255,255,255,.18),
-    0 0 0 10px rgba(255,255,255,.07),
-    0 6px 32px rgba(0,0,0,.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: rgba(0,0,0,.6);
+  border: 3.5px solid rgba(255,255,255,.97);
+  box-shadow: 0 0 0 6px rgba(255,255,255,.2), 0 0 0 12px rgba(255,255,255,.08), 0 8px 40px rgba(0,0,0,.7);
+  display: flex; align-items: center; justify-content: center;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  transition: transform .12s, box-shadow .12s;
-  /* pulse animation so user notices it */
-  animation: ar-pulse 2.4s ease-in-out infinite;
+  transition: transform .12s;
+  animation: ar-pulse 2.2s ease-in-out infinite;
 }
-.ar-shutter-ring:active {
-  transform: scale(.88);
-  box-shadow: 0 0 0 3px rgba(255,255,255,.12), 0 2px 14px rgba(0,0,0,.4);
-  animation: none;
-}
+.ar-shutter-ring:active { transform: scale(.86); animation: none; }
 @keyframes ar-pulse {
-  0%, 100% { box-shadow: 0 0 0 5px rgba(255,255,255,.18), 0 0 0 10px rgba(255,255,255,.07), 0 6px 32px rgba(0,0,0,.6); }
-  50%       { box-shadow: 0 0 0 8px rgba(255,255,255,.28), 0 0 0 16px rgba(255,255,255,.1),  0 6px 32px rgba(0,0,0,.6); }
+  0%,100% { box-shadow: 0 0 0 6px rgba(255,255,255,.2),  0 0 0 12px rgba(255,255,255,.08), 0 8px 40px rgba(0,0,0,.7); }
+  50%      { box-shadow: 0 0 0 10px rgba(255,255,255,.3), 0 0 0 20px rgba(255,255,255,.12), 0 8px 40px rgba(0,0,0,.7); }
 }
-
 .ar-shutter-ring svg {
-  width: 34px;
-  height: 34px;
-  fill: none;
-  stroke: #fff;
-  stroke-width: 1.7;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  filter: drop-shadow(0 1px 3px rgba(0,0,0,.8));
+  width: 36px; height: 36px;
+  fill: none; stroke: #fff;
+  stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round;
+  filter: drop-shadow(0 1px 4px rgba(0,0,0,.9));
 }
-
 .ar-shutter-label {
-  font-size: 11px;
-  font-family: var(--ff-ui);
-  font-weight: 500;
-  letter-spacing: .2em;
-  text-transform: uppercase;
+  font-size: 12px; font-family: var(--ff-ui); font-weight: 600;
+  letter-spacing: .22em; text-transform: uppercase;
   color: #fff;
-  text-shadow: 0 1px 8px rgba(0,0,0,.9), 0 0 20px rgba(0,0,0,.7);
-  white-space: nowrap;
+  text-shadow: 0 1px 10px rgba(0,0,0,1), 0 0 24px rgba(0,0,0,.8);
 }
 
-/* iOS-specific hint banner (shown only on iOS Quick Look) */
-#ios-ar-hint {
+/* ═══════════════════════════════════════
+   SCENE VIEWER / QUICK LOOK INSTRUCTION
+   Shows BEFORE the native AR app launches
+   ═══════════════════════════════════════ */
+#pre-ar-modal {
   display: none;
   position: fixed;
-  z-index: 2147483647;
-  top: max(env(safe-area-inset-top, 20px), 56px);
-  left: 50%;
-  transform: translateX(-50%);
+  inset: 0;
+  z-index: 99999;
   background: rgba(0,0,0,.72);
-  border: 1px solid rgba(255,255,255,.25);
-  color: #fff;
-  padding: 11px 22px;
-  border-radius: 30px;
-  font-size: 12px;
-  font-family: var(--ff-ui);
-  letter-spacing: .08em;
-  white-space: nowrap;
-  text-align: center;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  pointer-events: none;
-  animation: hint-drop .35s ease;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: max(env(safe-area-inset-bottom), 24px);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
-#ios-ar-hint.show { display: block; }
-@keyframes hint-drop {
-  from { opacity:0; transform: translateX(-50%) translateY(-10px); }
-  to   { opacity:1; transform: translateX(-50%) translateY(0); }
+#pre-ar-modal.show { display: flex; }
+
+.pre-ar-sheet {
+  background: #18140e;
+  border: 1px solid rgba(184,151,58,.35);
+  border-radius: 24px 24px 16px 16px;
+  padding: 28px 24px 32px;
+  width: min(92vw, 420px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  animation: sheet-up .32s cubic-bezier(.22,1,.36,1);
+}
+@keyframes sheet-up {
+  from { transform: translateY(60px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
 }
 
-/* toast notification */
+.pre-ar-icon {
+  font-size: 48px;
+  margin-bottom: 14px;
+  line-height: 1;
+}
+.pre-ar-title {
+  font-family: var(--ff-en);
+  font-size: 22px;
+  color: var(--gold2);
+  letter-spacing: .06em;
+  margin-bottom: 8px;
+  text-align: center;
+}
+.pre-ar-body {
+  font-size: 13px;
+  line-height: 1.65;
+  color: rgba(240,232,213,.7);
+  text-align: center;
+  margin-bottom: 6px;
+}
+.pre-ar-step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(184,151,58,.12);
+}
+.pre-ar-step:last-of-type { border-bottom: none; }
+.step-num {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 1px solid rgba(184,151,58,.5);
+  color: var(--gold2);
+  font-size: 12px; font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.step-text { font-size: 13px; color: rgba(240,232,213,.8); line-height: 1.5; }
+.step-text strong { color: var(--gold2); font-weight: 600; }
+
+.pre-ar-btns {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  margin-top: 22px;
+}
+.btn-cancel-ar {
+  flex: 0 0 auto;
+  padding: 14px 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(184,151,58,.3);
+  background: rgba(184,151,58,.08);
+  color: rgba(240,232,213,.6);
+  font-size: 12px; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase;
+  cursor: pointer;
+}
+.btn-launch-ar {
+  flex: 1;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  color: #000;
+  font-size: 13px; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase;
+  cursor: pointer;
+}
+
+/* toast */
 .ar-toast {
   position: fixed;
   top: max(env(safe-area-inset-top), 60px);
   left: 50%;
   transform: translateX(-50%) translateY(-12px);
   z-index: 2147483647;
-  background: rgba(8,6,4,.88);
+  background: rgba(8,6,4,.9);
   border: 1px solid rgba(184,151,58,.4);
   color: var(--gold2);
   padding: 10px 20px;
   border-radius: 30px;
-  font-size: 11px;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  opacity: 0;
-  pointer-events: none;
+  font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+  opacity: 0; pointer-events: none;
   backdrop-filter: blur(12px);
   transition: opacity .25s, transform .25s;
   white-space: nowrap;
 }
-.ar-toast.show {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
+.ar-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-/* full-screen flash for AR capture feedback */
 .ar-flash {
-  display: none;
-  position: fixed;
-  inset: 0;
-  z-index: 2147483646;
-  background: #fff;
-  pointer-events: none;
+  display: none; position: fixed; inset: 0;
+  z-index: 2147483646; background: #fff; pointer-events: none;
 }
-.ar-flash.fire {
-  display: block;
-  animation: arFlash .4s ease forwards;
-}
-@keyframes arFlash {
-  0%   { opacity: .9; }
-  100% { opacity: 0; }
-}
+.ar-flash.fire { display: block; animation: arFlash .4s ease forwards; }
+@keyframes arFlash { 0% { opacity:.9; } 100% { opacity:0; } }
 
 .pinch-hint {
-  position: absolute;
-  bottom: 12px;
-  left: 50%;
+  position: absolute; bottom: 12px; left: 50%;
   transform: translateX(-50%);
   z-index: 9;
   background: rgba(8,6,4,.8);
   border: 1px solid rgba(184,151,58,.35);
-  padding: 7px 14px;
-  border-radius: 30px;
-  font-size: 9px;
-  letter-spacing: .12em;
-  color: var(--gold2);
-  white-space: nowrap;
-  pointer-events: none;
-  opacity: 0;
+  padding: 7px 14px; border-radius: 30px;
+  font-size: 9px; letter-spacing: .12em; color: var(--gold2);
+  white-space: nowrap; pointer-events: none; opacity: 0;
 }
 .model-wrap.active .pinch-hint {
   opacity: 1;
   animation: fadeout 4s ease 2.5s forwards;
 }
-@keyframes fadeout { to { opacity: 0; } }
+@keyframes fadeout { to { opacity:0; } }
 
 .loading-overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 10;
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  background: rgba(8,6,4,.8);
-  pointer-events: none;
+  position: absolute; inset: 0; z-index: 10;
+  display: none; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 12px; background: rgba(8,6,4,.8); pointer-events: none;
 }
 .loading-overlay.show { display: flex; }
-
 .loader-ring {
-  width: 42px; height: 42px;
-  border-radius: 50%;
-  border: 2px solid rgba(184,151,58,.15);
-  border-top-color: var(--gold2);
+  width: 42px; height: 42px; border-radius: 50%;
+  border: 2px solid rgba(184,151,58,.15); border-top-color: var(--gold2);
   animation: spin .9s linear infinite;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
-
-.loader-bar-track {
-  width: 110px; height: 3px;
-  background: rgba(184,151,58,.18);
-  border-radius: 10px; overflow: hidden;
-}
-.loader-bar-fill {
-  height: 100%; width: 0%;
-  background: var(--gold2);
-  transition: width .1s linear;
-}
-.loader-label {
-  font-size: 10px;
-  letter-spacing: .18em;
-  text-transform: uppercase;
-  color: var(--paper);
-}
+@keyframes spin { to { transform:rotate(360deg); } }
+.loader-bar-track { width:110px; height:3px; background:rgba(184,151,58,.18); border-radius:10px; overflow:hidden; }
+.loader-bar-fill  { height:100%; width:0%; background:var(--gold2); transition:width .1s linear; }
+.loader-label { font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:var(--paper); }
 
 .error-overlay {
   position: absolute; inset: 0; z-index: 11;
@@ -424,95 +402,52 @@ model-viewer > [slot="ar-button"] { display: none !important; }
   gap: 10px; background: rgba(8,6,4,.75);
 }
 .error-overlay.show { display: flex; }
-.error-icon { font-size: 28px; opacity: .5; }
-.error-msg {
-  font-size: 9px; letter-spacing: .16em;
-  text-transform: uppercase; opacity: .55;
-  text-align: center; padding: 0 20px;
-}
+.error-icon { font-size:28px; opacity:.5; }
+.error-msg { font-size:9px; letter-spacing:.16em; text-transform:uppercase; opacity:.55; text-align:center; padding:0 20px; }
 .retry-btn {
-  background: rgba(184,151,58,.15);
-  border: 1px solid rgba(184,151,58,.4);
-  color: var(--gold2); border-radius: 30px;
-  padding: 8px 20px; font-size: 10px;
-  letter-spacing: .14em; text-transform: uppercase;
-  cursor: pointer;
+  background:rgba(184,151,58,.15); border:1px solid rgba(184,151,58,.4);
+  color:var(--gold2); border-radius:30px;
+  padding:8px 20px; font-size:10px; letter-spacing:.14em; text-transform:uppercase; cursor:pointer;
 }
 
 .ar-no-support {
-  display: none;
-  position: absolute;
-  bottom: 12px; left: 50%;
-  transform: translateX(-50%);
-  z-index: 8;
-  background: rgba(8,6,4,.85);
-  border: 1px solid rgba(184,151,58,.25);
-  padding: 7px 14px; border-radius: 30px;
-  font-size: 9px; letter-spacing: .12em;
-  color: rgba(212,174,82,.5);
-  white-space: nowrap; pointer-events: none;
+  display: none; position: absolute;
+  bottom:12px; left:50%; transform:translateX(-50%);
+  z-index:8; background:rgba(8,6,4,.85);
+  border:1px solid rgba(184,151,58,.25);
+  padding:7px 14px; border-radius:30px;
+  font-size:9px; letter-spacing:.12em;
+  color:rgba(212,174,82,.5); white-space:nowrap; pointer-events:none;
 }
 
-.landmark-info { padding: 16px; background: #11100d; }
-.landmark-name { font-family: var(--ff-en); font-size: 28px; margin-bottom: 4px; }
-.landmark-city {
-  font-size: 10px; letter-spacing: .18em;
-  text-transform: uppercase; color: var(--gold); margin-bottom: 14px;
-}
-.btn-row { display: flex; gap: 8px; }
+.landmark-info { padding:16px; background:#11100d; }
+.landmark-name { font-family:var(--ff-en); font-size:28px; margin-bottom:4px; }
+.landmark-city { font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:var(--gold); margin-bottom:14px; }
+.btn-row { display:flex; gap:8px; }
 
 .action-btn {
-  border: none; border-radius: 10px;
-  padding: 13px; font-size: 11px; font-weight: 600;
-  letter-spacing: .1em; text-transform: uppercase;
-  min-height: 46px; cursor: pointer;
-  transition: opacity .2s, background .2s;
+  border:none; border-radius:10px;
+  padding:13px; font-size:11px; font-weight:600;
+  letter-spacing:.1em; text-transform:uppercase;
+  min-height:46px; cursor:pointer;
+  transition:opacity .2s, background .2s;
 }
-.action-btn:disabled { opacity: .4; cursor: not-allowed; }
-
-.btn-3d {
-  background: rgba(184,151,58,.14);
-  color: var(--gold2);
-  border: 1px solid rgba(184,151,58,.35);
-}
-.btn-3d.is-active { background: rgba(184,151,58,.28); }
-
+.action-btn:disabled { opacity:.4; cursor:not-allowed; }
+.btn-3d { background:rgba(184,151,58,.14); color:var(--gold2); border:1px solid rgba(184,151,58,.35); }
+.btn-3d.is-active { background:rgba(184,151,58,.28); }
 .btn-ar {
-  flex: 1;
-  background: linear-gradient(135deg, var(--gold), var(--gold2));
-  color: #000;
-  position: relative;
-  overflow: hidden;
+  flex:1;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  color:#000; position:relative; overflow:hidden;
 }
-.btn-ar::before {
-  content: '';
-  position: absolute; inset: 0;
-  background: rgba(0,0,0,.25);
-  opacity: 0;
-  transition: opacity .18s;
-}
-.btn-ar:hover::before { opacity: 1; }
-.btn-ar.loading {
-  background: rgba(184,151,58,.18);
-  color: var(--gold2);
-  border: 1px solid rgba(184,151,58,.3);
-}
-.btn-ar.error {
-  background: rgba(184,151,58,.1);
-  color: rgba(212,174,82,.4);
-  border: 1px solid rgba(184,151,58,.2);
-}
+.btn-ar::before { content:''; position:absolute; inset:0; background:rgba(0,0,0,.25); opacity:0; transition:opacity .18s; }
+.btn-ar:hover::before { opacity:1; }
+.btn-ar.loading { background:rgba(184,151,58,.18); color:var(--gold2); border:1px solid rgba(184,151,58,.3); }
+.btn-ar.error   { background:rgba(184,151,58,.1);  color:rgba(212,174,82,.4); border:1px solid rgba(184,151,58,.2); }
 
-.scroll-dots {
-  display: flex; justify-content: center; gap: 8px;
-  padding: 12px 0 max(env(safe-area-inset-bottom), 14px);
-}
-.dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: rgba(184,151,58,.25);
-  transition: transform .2s, background .2s;
-}
-.dot.active { background: var(--gold2); transform: scale(1.35); }
+.scroll-dots { display:flex; justify-content:center; gap:8px; padding:12px 0 max(env(safe-area-inset-bottom),14px); }
+.dot { width:6px; height:6px; border-radius:50%; background:rgba(184,151,58,.25); transition:transform .2s,background .2s; }
+.dot.active { background:var(--gold2); transform:scale(1.35); }
 </style>
 </head>
 <body>
@@ -527,12 +462,9 @@ model-viewer > [slot="ar-button"] { display: none !important; }
 <div class="explorer-grid" id="grid"></div>
 <div class="scroll-dots"   id="dots"></div>
 
-<!-- iOS Quick Look hint — visible above native AR layer -->
-<div id="ios-ar-hint">📸 Press Side + Volume Up to screenshot</div>
-
-<!-- AR screenshot overlay (fixed, shown over WebXR AR view on Android) -->
+<!-- WebXR capture overlay (only visible during true WebXR sessions) -->
 <div id="ar-capture-overlay">
-  <div class="ar-shutter-ring" id="ar-shutter-btn" role="button" aria-label="Capture AR Screenshot" tabindex="0">
+  <div class="ar-shutter-ring" id="ar-shutter-btn" role="button" aria-label="Capture screenshot" tabindex="0">
     <svg viewBox="0 0 24 24" aria-hidden="true">
       <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
       <circle cx="12" cy="13" r="4"/>
@@ -541,162 +473,129 @@ model-viewer > [slot="ar-button"] { display: none !important; }
   <span class="ar-shutter-label">Capture</span>
 </div>
 
-<!-- Full-screen white flash for AR capture feedback -->
-<div class="ar-flash" id="ar-flash"></div>
+<!-- Pre-AR instruction sheet (shown BEFORE Scene Viewer / Quick Look launches) -->
+<div id="pre-ar-modal">
+  <div class="pre-ar-sheet">
+    <div class="pre-ar-icon">🪐</div>
+    <div class="pre-ar-title" id="pre-ar-title">View in Your Space</div>
+    <div class="pre-ar-body" id="pre-ar-body">AR will open in a separate viewer. Here's how to capture a photo:</div>
 
-<!-- Toast for save confirmation -->
+    <div class="pre-ar-step" id="step-screenshot">
+      <div class="step-num">1</div>
+      <div class="step-text" id="step1-text">Place the model, then press <strong>Volume Down + Power</strong> at the same time</div>
+    </div>
+    <div class="pre-ar-step" id="step-gallery">
+      <div class="step-num">2</div>
+      <div class="step-text">Your screenshot saves to <strong>Gallery / Photos</strong> automatically</div>
+    </div>
+    <div class="pre-ar-step" id="step-close">
+      <div class="step-num">3</div>
+      <div class="step-text">Tap <strong>✕ Close</strong> or press Back to return here</div>
+    </div>
+
+    <div class="pre-ar-btns">
+      <button class="btn-cancel-ar" id="btn-cancel-ar">Cancel</button>
+      <button class="btn-launch-ar" id="btn-launch-ar">Launch AR →</button>
+    </div>
+  </div>
+</div>
+
+<div class="ar-flash" id="ar-flash"></div>
 <div class="ar-toast" id="ar-toast"></div>
 
 <script>
 const LANDMARKS = [
-  {
-    name:    'Cheonchuksa Temple',
-    city:    'Korea',
-    folder:  'Cheonchuksa_Temple',
-    file:    'Cheonchuksa_Temple',
-    arScale: .5,
-    orbit:   '30deg 65deg 110%',
-  },
-  {
-    name:    'Seokguram Temple',
-    city:    'Korea',
-    folder:  'Seokguram_Temple',
-    file:    'Seokguram_Temple',
-    arScale: .5,
-    orbit:   '20deg 60deg 105%',
-  },
-  {
-    name:    'Seoul Tower',
-    city:    'Korea',
-    folder:  'seoul_tower',
-    file:    'seoul_tower',
-    arScale: .5,
-    orbit:   '0deg 55deg 105%',
-  },
-  {
-    name:    'Traditional Bridge',
-    city:    'Korea',
-    folder:  'traditional_bridge',
-    file:    'traditional_bridge',
-    arScale: .5,
-    orbit:   '15deg 60deg 110%',
-  },
+  { name:'Cheonchuksa Temple', city:'Korea', folder:'Cheonchuksa_Temple', file:'Cheonchuksa_Temple', arScale:.5, orbit:'30deg 65deg 110%' },
+  { name:'Seokguram Temple',   city:'Korea', folder:'Seokguram_Temple',   file:'Seokguram_Temple',   arScale:.5, orbit:'20deg 60deg 105%' },
+  { name:'Seoul Tower',        city:'Korea', folder:'seoul_tower',        file:'seoul_tower',        arScale:.5, orbit:'0deg 55deg 105%'  },
+  { name:'Traditional Bridge', city:'Korea', folder:'traditional_bridge', file:'traditional_bridge', arScale:.5, orbit:'15deg 60deg 110%' },
 ];
 
 const IS_IOS = /iPhone|iPad|iPod/i.test(navigator.userAgent) ||
                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
-const grid           = document.getElementById('grid');
-const dotsEl         = document.getElementById('dots');
-const arOverlay      = document.getElementById('ar-capture-overlay');
-const arShutterBtn   = document.getElementById('ar-shutter-btn');
-const arFlash        = document.getElementById('ar-flash');
-const arToast        = document.getElementById('ar-toast');
-const iosHint        = document.getElementById('ios-ar-hint');
+// Detect Scene Viewer support (Android Chrome)
+const IS_ANDROID = /android/i.test(navigator.userAgent);
 
-let activeARViewer   = null;
-let activeARName     = '';
-let toastTimer       = null;
-let iosHintTimer     = null;
+const grid         = document.getElementById('grid');
+const dotsEl       = document.getElementById('dots');
+const arOverlay    = document.getElementById('ar-capture-overlay');
+const arShutterBtn = document.getElementById('ar-shutter-btn');
+const arFlash      = document.getElementById('ar-flash');
+const arToast      = document.getElementById('ar-toast');
+const preArModal   = document.getElementById('pre-ar-modal');
+const btnCancelAr  = document.getElementById('btn-cancel-ar');
+const btnLaunchAr  = document.getElementById('btn-launch-ar');
+const preArBody    = document.getElementById('pre-ar-body');
+const step1Text    = document.getElementById('step1-text');
 
-/* ── Toast helper ── */
-function showToast(msg, durationMs = 2800) {
+let activeARViewer = null;
+let activeARName   = '';
+let pendingARLaunch = null; // function to call after user confirms
+let toastTimer     = null;
+
+// Customise sheet text per platform
+if (IS_IOS) {
+  preArBody.textContent = 'AR opens in Apple Quick Look. Here\'s how to capture a photo:';
+  step1Text.innerHTML   = 'Position the model, then press <strong>Side Button + Volume Up</strong> at the same time';
+} else if (IS_ANDROID) {
+  preArBody.textContent = 'AR opens in Google Scene Viewer. Here\'s how to capture a photo:';
+  step1Text.innerHTML   = 'Position the model, then press <strong>Volume Down + Power</strong> at the same time';
+}
+
+function showToast(msg, ms = 2800) {
   if (toastTimer) clearTimeout(toastTimer);
   arToast.textContent = msg;
   arToast.classList.add('show');
-  toastTimer = setTimeout(() => arToast.classList.remove('show'), durationMs);
+  toastTimer = setTimeout(() => arToast.classList.remove('show'), ms);
 }
 
-/* ── iOS hint helper ── */
-function showIosHint(msg, durationMs = 5000) {
-  if (iosHintTimer) clearTimeout(iosHintTimer);
-  iosHint.textContent = msg;
-  iosHint.classList.add('show');
-  iosHintTimer = setTimeout(() => iosHint.classList.remove('show'), durationMs);
+/* ── Pre-AR modal ── */
+function showPreArModal(launchFn) {
+  pendingARLaunch = launchFn;
+  preArModal.classList.add('show');
 }
 
-/* ── AR screenshot logic ── */
-async function captureARScreen(landmarkName) {
+btnCancelAr.addEventListener('click', () => {
+  preArModal.classList.remove('show');
+  pendingARLaunch = null;
+});
+
+btnLaunchAr.addEventListener('click', () => {
+  preArModal.classList.remove('show');
+  if (pendingARLaunch) { pendingARLaunch(); pendingARLaunch = null; }
+});
+
+/* ── WebXR capture (only works in true WebXR, not Scene Viewer) ── */
+async function captureWebXR(landmarkName) {
   arFlash.classList.remove('fire');
   void arFlash.offsetWidth;
   arFlash.classList.add('fire');
 
-  /* Strategy 1 – model-viewer captureImage() API */
   if (activeARViewer && typeof activeARViewer.captureImage === 'function') {
-    try {
-      const blob = await activeARViewer.captureImage();
-      downloadBlob(blob, landmarkName);
-      showToast('✦ Saved to downloads');
-      return;
-    } catch (e) { /* fall through */ }
+    try { const b = await activeARViewer.captureImage(); downloadBlob(b, landmarkName); showToast('✦ Saved'); return; }
+    catch(e) {}
   }
-
-  /* Strategy 2 – WebGL canvas from shadow DOM (Android WebXR) */
   if (activeARViewer) {
     try {
       const sr = activeARViewer.shadowRoot;
-      const canvas = sr && (
-        sr.querySelector('canvas[aria-hidden]') ||
-        sr.querySelector('canvas')
-      );
-      if (canvas && canvas.width > 0) {
-        canvas.toBlob(blob => {
-          if (blob) { downloadBlob(blob, landmarkName); showToast('✦ Saved to downloads'); }
-          else      { showToast('⚠ Canvas empty — use system screenshot'); }
-        }, 'image/png');
-        return;
-      }
-    } catch (e) { /* cross-origin restriction, fall through */ }
+      const c = sr && (sr.querySelector('canvas[aria-hidden]') || sr.querySelector('canvas'));
+      if (c && c.width > 0) { c.toBlob(b => { if(b){downloadBlob(b,landmarkName);showToast('✦ Saved');}else{showToast('⚠ Use system screenshot');} },'image/png'); return; }
+    } catch(e) {}
   }
-
-  /* Strategy 3 – Screen Capture API (Android Chrome desktop-like) */
-  if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
-    try {
-      const stream = await navigator.mediaDevices.getDisplayMedia({ video: { cursor: 'never' } });
-      const track  = stream.getVideoTracks()[0];
-      await new Promise(r => setTimeout(r, 120));
-      const ic = new ImageCapture(track);
-      const bmp = await ic.grabFrame();
-      track.stop();
-      const cvs = document.createElement('canvas');
-      cvs.width = bmp.width; cvs.height = bmp.height;
-      cvs.getContext('2d').drawImage(bmp, 0, 0);
-      cvs.toBlob(blob => {
-        downloadBlob(blob, landmarkName);
-        showToast('✦ Saved to downloads');
-      }, 'image/png');
-      return;
-    } catch (e) { /* user denied or unsupported */ }
-  }
-
-  /* Strategy 4 – Web Share API (best on Android Chrome) */
-  if (!IS_IOS && navigator.share && navigator.canShare) {
-    showToast('📸 Use device screenshot button', 3500);
-    return;
-  }
-
-  /* iOS fallback: button is hidden under native UIKit — show hint only */
-  showToast(IS_IOS
-    ? '📸 Press Side + Vol Up to capture'
-    : '📸 Use your screenshot button', 4000);
+  showToast('📸 Use your screenshot button', 3500);
 }
 
 function downloadBlob(blob, name) {
-  const url  = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href     = url;
-  link.download = `${name}-AR-${Date.now()}.png`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `${name}-AR-${Date.now()}.png`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
   setTimeout(() => URL.revokeObjectURL(url), 5000);
 }
 
-/* Shutter: click + keyboard Enter/Space */
-arShutterBtn.addEventListener('click', () => captureARScreen(activeARName));
-arShutterBtn.addEventListener('keydown', e => {
-  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); captureARScreen(activeARName); }
-});
+arShutterBtn.addEventListener('click', () => captureWebXR(activeARName));
+arShutterBtn.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){e.preventDefault();captureWebXR(activeARName);} });
 
 /* ── Build cards ── */
 LANDMARKS.forEach((lm, idx) => {
@@ -704,87 +603,60 @@ LANDMARKS.forEach((lm, idx) => {
   const glbPath  = `${base}.glb`;
   const usdzPath = `${base}.usdz`;
   const imgPath  = `${base}.png`;
-  const s        = (lm.arScale || 1).toFixed(6);
+  const s        = (lm.arScale||1).toFixed(6);
 
-  const arModes = IS_IOS
+  // Force WebXR first on Android so the capture overlay can work
+  // Scene Viewer is a separate app — our overlay can't appear in it
+  const arModes  = IS_IOS
     ? 'quick-look webxr scene-viewer'
-    : 'webxr scene-viewer quick-look';
+    : 'webxr scene-viewer quick-look';   // webxr first on Android
 
   const card = document.createElement('div');
-  card.className   = 'landmark-card';
+  card.className = 'landmark-card';
   card.dataset.idx = idx;
 
   card.innerHTML = `
     <div class="model-wrap" id="wrap-${idx}">
-
-      <img class="model-poster"
-           src="${imgPath}" alt="${lm.name}"
-           ${idx === 0 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"'}
-           decoding="async"
-           onerror="this.style.opacity='.1'">
-
+      <img class="model-poster" src="${imgPath}" alt="${lm.name}"
+           ${idx===0?'loading="eager" fetchpriority="high"':'loading="lazy"'}
+           decoding="async" onerror="this.style.opacity='.1'">
       <model-viewer
         id="mv-${idx}"
         src="${glbPath}"
-        ${IS_IOS ? `ios-src="${usdzPath}"` : ''}
-
-        ar
-        ar-modes="${arModes}"
-        ar-placement="floor"
-        ar-scale="auto"
-
-        camera-controls
-        interaction-prompt="auto"
-        interaction-prompt-style="wiggle"
-
+        ${IS_IOS?`ios-src="${usdzPath}"`:''}
+        ar ar-modes="${arModes}"
+        ar-placement="floor" ar-scale="auto"
+        camera-controls interaction-prompt="auto" interaction-prompt-style="wiggle"
         xr-environment
-
-        min-camera-orbit="auto auto 40%"
-        max-camera-orbit="auto auto 900%"
-
-        min-field-of-view="20deg"
-        max-field-of-view="90deg"
-
+        min-camera-orbit="auto auto 40%" max-camera-orbit="auto auto 900%"
+        min-field-of-view="20deg" max-field-of-view="90deg"
         touch-action="none"
-
         camera-orbit="${lm.orbit}"
         scale="${s} ${s} ${s}"
-        style="--ar-scale:${s}; touch-action:none;"
-      >
+        style="--ar-scale:${s}; touch-action:none;">
         <button slot="ar-button" aria-hidden="true" style="display:none"></button>
       </model-viewer>
-
-      <!-- shutter flash for 3D mode -->
       <div class="shutter-flash" id="flash-${idx}"></div>
-
       <div class="loading-overlay show" id="loader-${idx}">
         <div class="loader-ring"></div>
-        <div class="loader-bar-track">
-          <div class="loader-bar-fill" id="bar-${idx}"></div>
-        </div>
+        <div class="loader-bar-track"><div class="loader-bar-fill" id="bar-${idx}"></div></div>
         <div class="loader-label" id="lbl-${idx}">Loading model…</div>
       </div>
-
       <div class="error-overlay" id="err-${idx}">
         <div class="error-icon">⚠︎</div>
         <div class="error-msg" id="errmsg-${idx}">Model unavailable</div>
         <button class="retry-btn" id="retry-${idx}">↺ Retry</button>
       </div>
-
       <div class="ar-badge" id="badge-${idx}">✦ AR Ready</div>
-
-      <!-- 3D mode capture button -->
-      <button class="capture-btn" id="capture-${idx}" aria-label="Screenshot 3D model" title="Screenshot">
+      <button class="capture-btn" id="capture-${idx}" aria-label="Screenshot 3D model">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
           <circle cx="12" cy="13" r="4"/>
         </svg>
       </button>
-
       <div class="pinch-hint">⟺ Pinch to Scale · Drag to Rotate · AR Ready</div>
       <div class="ar-no-support" id="nosup-${idx}">AR not available on this device</div>
     </div>
-
     <div class="landmark-info">
       <div class="landmark-name">${lm.name}</div>
       <div class="landmark-city">${lm.city}</div>
@@ -797,7 +669,7 @@ LANDMARKS.forEach((lm, idx) => {
   grid.appendChild(card);
 
   const dot = document.createElement('div');
-  dot.className = 'dot' + (idx === 0 ? ' active' : '');
+  dot.className = 'dot' + (idx===0?' active':'');
   dotsEl.appendChild(dot);
 
   const mv         = card.querySelector(`#mv-${idx}`);
@@ -818,9 +690,8 @@ LANDMARKS.forEach((lm, idx) => {
   let modelReady = false;
 
   mv.addEventListener('progress', e => {
-    const pct = Math.round((e.detail.totalProgress || 0) * 100);
-    bar.style.width = pct + '%';
-    lbl.textContent = `Loading ${pct}%`;
+    const pct = Math.round((e.detail.totalProgress||0)*100);
+    bar.style.width = pct+'%'; lbl.textContent = `Loading ${pct}%`;
   });
 
   mv.addEventListener('load', () => {
@@ -829,7 +700,7 @@ LANDMARKS.forEach((lm, idx) => {
     errBox.classList.remove('show');
     badge.classList.add('visible');
     btnAR.disabled = false;
-    btnAR.classList.remove('loading', 'error');
+    btnAR.classList.remove('loading','error');
     if (mv.canActivateAR) {
       btnAR.textContent = '🪐 View in Real World';
     } else {
@@ -843,7 +714,7 @@ LANDMARKS.forEach((lm, idx) => {
   mv.addEventListener('error', () => {
     modelReady = false;
     loader.classList.remove('show');
-    fetch(glbPath, { method: 'HEAD' })
+    fetch(glbPath,{method:'HEAD'})
       .then(r => { errmsg.textContent = r.ok ? 'File may be corrupted' : `File not found (${r.status})`; })
       .catch(() => { errmsg.textContent = 'Serve via localhost — not file://'; });
     errBox.classList.add('show');
@@ -853,36 +724,21 @@ LANDMARKS.forEach((lm, idx) => {
     btnAR.textContent = '⚠ Unavailable';
   });
 
-  /* ── AR session events ── */
+  /* AR session events */
   mv.addEventListener('ar-status', e => {
     const st = e.detail.status;
 
     if (st === 'session-started') {
       activeARViewer = mv;
       activeARName   = lm.name;
-
-      if (IS_IOS) {
-        /*
-         * iOS USDZ Quick Look is a native UIKit fullscreen overlay.
-         * JavaScript overlays (position:fixed) are rendered BENEATH it and
-         * are invisible to the user. We can't show a capture button on top.
-         * Best UX: show the hint BEFORE the native overlay takes over,
-         * using the toast (which flashes briefly before Quick Look opens).
-         */
-        showToast('📸 Side + Vol Up to screenshot', 4500);
-        showIosHint('📸 Side + Volume Up to capture');
-        /* Do NOT show arOverlay on iOS — it's pointless under Quick Look */
-      } else {
-        /* Android WebXR — our fixed overlay IS visible over the AR canvas */
-        arOverlay.classList.add('ar-active');
-        showToast('📸 Tap the button to capture AR');
-        mv.style.touchAction = 'none';
-      }
+      // Only show floating capture overlay for WebXR (in-browser AR)
+      // Scene Viewer = separate app, our DOM is not visible
+      arOverlay.classList.add('ar-active');
+      mv.style.touchAction = 'none';
     }
 
     if (st === 'not-presenting') {
       arOverlay.classList.remove('ar-active');
-      iosHint.classList.remove('show');
       activeARViewer = null;
       btnAR.disabled = false;
       btnAR.textContent = '🪐 View in Real World';
@@ -890,7 +746,6 @@ LANDMARKS.forEach((lm, idx) => {
 
     if (st === 'failed') {
       arOverlay.classList.remove('ar-active');
-      iosHint.classList.remove('show');
       activeARViewer = null;
       btnAR.disabled = false;
       btnAR.textContent = '⚠ AR Failed — Retry';
@@ -898,10 +753,8 @@ LANDMARKS.forEach((lm, idx) => {
   });
 
   wrap.addEventListener('touchstart', e => {
-    if (wrap.classList.contains('active') && e.touches.length > 1) {
-      e.stopPropagation();
-    }
-  }, { passive: true });
+    if (wrap.classList.contains('active') && e.touches.length > 1) e.stopPropagation();
+  }, { passive:true });
 
   retryBtn.addEventListener('click', () => {
     errBox.classList.remove('show');
@@ -910,8 +763,7 @@ LANDMARKS.forEach((lm, idx) => {
     btnAR.classList.add('loading');
     btnAR.textContent = '⏳ Loading…';
     loader.classList.add('show');
-    bar.style.width = '0%';
-    lbl.textContent = 'Loading model…';
+    bar.style.width = '0%'; lbl.textContent = 'Loading model…';
     const src = mv.getAttribute('src');
     mv.removeAttribute('src');
     requestAnimationFrame(() => mv.setAttribute('src', src));
@@ -923,54 +775,46 @@ LANDMARKS.forEach((lm, idx) => {
     btn3d.textContent = active ? '✕ 2D' : '⬡ 3D';
   });
 
-  /* 3D mode screenshot */
   captureBtn.addEventListener('click', async () => {
-    flashEl.classList.remove('fire');
-    void flashEl.offsetWidth;
-    flashEl.classList.add('fire');
-
+    flashEl.classList.remove('fire'); void flashEl.offsetWidth; flashEl.classList.add('fire');
     try {
       const sr = mv.shadowRoot;
       const canvas = sr && (sr.querySelector('canvas[aria-hidden]') || sr.querySelector('canvas'));
       if (!canvas || canvas.width === 0) throw new Error('no canvas');
-
       canvas.toBlob(blob => {
         if (!blob) { showToast('⚠ Screenshot failed'); return; }
-        downloadBlob(blob, lm.name);
-        showToast('✦ 3D snapshot saved');
+        downloadBlob(blob, lm.name); showToast('✦ 3D snapshot saved');
       }, 'image/png');
-    } catch (err) {
-      console.warn('3D capture:', err);
-      showToast('⚠ Screenshot unavailable');
-    }
+    } catch(err) { showToast('⚠ Screenshot unavailable'); }
   });
 
+  /* AR button: show instruction sheet first, then launch */
   btnAR.addEventListener('click', () => {
     if (!modelReady || btnAR.disabled) return;
-    if (!mv.canActivateAR) { nosup.style.display = 'block'; return; }
-    try { mv.activateAR(); } catch (e) { console.warn('activateAR error:', e); }
+    if (!mv.canActivateAR) { nosup.style.display='block'; return; }
+
+    showPreArModal(() => {
+      try { mv.activateAR(); } catch(e) { console.warn('activateAR:', e); }
+    });
   });
 });
 
-/* ── Scroll dots ── */
+/* scroll dots */
 const allDots = dotsEl.querySelectorAll('.dot');
 let rafPending = false;
-
 grid.addEventListener('scroll', () => {
-  if (rafPending) return;
-  rafPending = true;
+  if (rafPending) return; rafPending = true;
   requestAnimationFrame(() => {
     rafPending = false;
-    const cx = grid.scrollLeft + grid.clientWidth / 2;
-    let best = 0, bestDist = Infinity;
-    grid.querySelectorAll('.landmark-card').forEach((c, ci) => {
-      const d = Math.abs(c.offsetLeft + c.offsetWidth / 2 - cx);
-      if (d < bestDist) { bestDist = d; best = ci; }
+    const cx = grid.scrollLeft + grid.clientWidth/2;
+    let best=0, bestDist=Infinity;
+    grid.querySelectorAll('.landmark-card').forEach((c,ci) => {
+      const d = Math.abs(c.offsetLeft + c.offsetWidth/2 - cx);
+      if (d<bestDist) { bestDist=d; best=ci; }
     });
-    allDots.forEach((d, di) => d.classList.toggle('active', di === best));
+    allDots.forEach((d,di) => d.classList.toggle('active', di===best));
   });
-}, { passive: true });
+}, { passive:true });
 </script>
-
 </body>
 </html>
