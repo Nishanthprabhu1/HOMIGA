@@ -576,11 +576,34 @@ LANDMARKS.forEach((lm, idx) => {
     btn3d.classList.toggle('is-active', active);
     btn3d.textContent = active ? '✕ 2D' : '⬡ 3D';
   });
+btnAR.addEventListener('click', () => {
 
-  btnAR.addEventListener('click', () => {
+  if (!modelReady || btnAR.disabled) return;
 
-  window.location.href =
-  `ar.html?model=${encodeURIComponent(glbPath)}`;
+  if (!mv.canActivateAR) {
+    nosup.style.display = 'block';
+    return;
+  }
+
+  const isiPhone =
+    /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+  const msg = isiPhone
+    ? 'AR will open now.\n\nTo capture photo:\nPress Side Button + Volume Up'
+    : 'AR will open now.\n\nTo capture photo:\nPress Power + Volume Down';
+
+  alert(msg);
+
+  setTimeout(() => {
+
+    try {
+      mv.activateAR();
+    } catch (e) {
+      console.warn('activateAR error:', e);
+    }
+
+  }, 300);
+
 });
 });
 
