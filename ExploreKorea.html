@@ -249,117 +249,113 @@ model-viewer > [slot="ar-button"] svg {
   100% { opacity: 0; }
 }
 
-/* ════════════════════════════════════════════
-   AR CAPTURE OVERLAY — redesigned
-   Full-screen fixed, shown only during AR session
-   ════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════
+   AR CAPTURE OVERLAY
+   On Android (WebXR): browser renders the XR scene so
+   this fixed overlay actually appears over the camera.
+   z-index must beat model-viewer's internal layers.
+   ════════════════════════════════════════════════════ */
 #ar-capture-overlay {
   display: none;
   position: fixed;
-  z-index: 9999;
   inset: 0;
-  pointer-events: none;
+  z-index: 2147483646; /* max safe int - 1, beats WebXR canvas */
+  pointer-events: none; /* children opt back in */
 }
 #ar-capture-overlay.ar-active { display: block; }
 
-/* bottom bar holding the shutter button */
+/* top bar — centered status pill */
+.ar-top-bar {
+  position: absolute;
+  top: max(env(safe-area-inset-top), 20px);
+  left: 0; right: 0;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+.ar-hint-pill {
+  background: rgba(8,6,4,.80);
+  border: 1px solid rgba(184,151,58,.5);
+  color: var(--gold2);
+  padding: 8px 18px;
+  border-radius: 30px;
+  font-size: 11px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity .35s, transform .35s;
+  white-space: nowrap;
+}
+.ar-hint-pill.show { opacity: 1; transform: translateY(0); }
+
+/* bottom bar — shutter button */
 .ar-bottom-bar {
   position: absolute;
   bottom: 0;
-  left: 0;
-  right: 0;
-  padding-bottom: max(env(safe-area-inset-bottom), 40px);
+  left: 0; right: 0;
+  padding-bottom: max(env(safe-area-inset-bottom), 44px);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   pointer-events: auto;
 }
 
-/* outer ring — glassy translucent border ring */
+/* outer ring */
 .ar-shutter-ring {
-  width: 88px;
-  height: 88px;
+  width: 86px;
+  height: 86px;
   border-radius: 50%;
-  border: 3px solid rgba(255,255,255,.55);
+  border: 3px solid rgba(255,255,255,.65);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255,255,255,.07);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  box-shadow:
-    0 0 0 6px rgba(255,255,255,.08),
-    0 8px 32px rgba(0,0,0,.5);
+  background: rgba(0,0,0,.25);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 0 0 7px rgba(255,255,255,.12), 0 6px 28px rgba(0,0,0,.55);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  transition: transform .15s, box-shadow .15s;
+  touch-action: manipulation;
+  transition: transform .15s;
+  border: none; /* override default button border */
+  outline: 3px solid rgba(255,255,255,.65);
 }
-.ar-shutter-ring:active {
-  transform: scale(.88);
-  box-shadow:
-    0 0 0 3px rgba(255,255,255,.05),
-    0 4px 14px rgba(0,0,0,.35);
-}
+.ar-shutter-ring:active { transform: scale(.87); }
 
-/* inner white disc — classic camera shutter */
+/* inner white disc */
 .ar-shutter-disc {
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: rgba(255,255,255,.93);
+  background: rgba(255,255,255,.94);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background .12s;
+  transition: background .1s;
 }
-.ar-shutter-ring:active .ar-shutter-disc {
-  background: rgba(215,215,215,.9);
-}
+.ar-shutter-ring:active .ar-shutter-disc { background: rgba(210,210,210,.94); }
 
-/* camera icon */
 .ar-shutter-disc svg {
-  width: 28px;
-  height: 28px;
+  width: 27px; height: 27px;
   fill: none;
-  stroke: #111;
-  stroke-width: 1.8;
+  stroke: #0a0a0a;
+  stroke-width: 1.9;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
 .ar-shutter-label {
-  font-family: var(--ff-ui);
   font-size: 11px;
-  letter-spacing: .24em;
+  letter-spacing: .22em;
   text-transform: uppercase;
-  color: rgba(255,255,255,.72);
-  text-shadow: 0 1px 8px rgba(0,0,0,.7);
+  color: rgba(255,255,255,.78);
+  text-shadow: 0 1px 6px rgba(0,0,0,.8);
   white-space: nowrap;
 }
-
-/* hint pill — top-right corner */
-.ar-hint-pill {
-  position: absolute;
-  top: max(env(safe-area-inset-top), 16px);
-  right: 16px;
-  background: rgba(8,6,4,.75);
-  border: 1px solid rgba(184,151,58,.45);
-  color: var(--gold2);
-  padding: 8px 14px;
-  border-radius: 30px;
-  font-size: 10px;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  pointer-events: none;
-  opacity: 0;
-  transform: translateY(-8px);
-  transition: opacity .3s, transform .3s;
-  white-space: nowrap;
-}
-.ar-hint-pill.show { opacity: 1; transform: translateY(0); }
 
 /* ── toast ── */
 .ar-toast {
@@ -577,21 +573,23 @@ model-viewer > [slot="ar-button"] svg {
 <div class="explorer-grid" id="grid"></div>
 <div class="scroll-dots"   id="dots"></div>
 
-<!-- ═══════════════════════════════════════════
+<!-- ═══════════════════════════════════════════════════
      AR CAPTURE OVERLAY
-     Full-screen overlay shown only in AR session.
-     Contains a large shutter button at the bottom
-     that captures the 3D model + real world.
-     ═══════════════════════════════════════════ -->
+     Android WebXR: this overlay sits ON TOP of the live
+     camera feed since WebXR renders inside the browser.
+     iOS Quick Look: native app, use slot="ar-button" instead.
+     ═══════════════════════════════════════════════════ -->
 <div id="ar-capture-overlay">
 
-  <!-- Hint pill — top right -->
-  <div class="ar-hint-pill" id="ar-hint-pill">AR · Tap to Capture</div>
+  <!-- Top pill -->
+  <div class="ar-top-bar">
+    <div class="ar-hint-pill" id="ar-hint-pill">● AR Live</div>
+  </div>
 
-  <!-- Shutter bar — bottom center -->
+  <!-- Bottom shutter -->
   <div class="ar-bottom-bar">
     <button class="ar-shutter-ring" id="ar-shutter-btn"
-            aria-label="Capture AR photo — saves 3D model with real world background">
+            aria-label="Capture AR photo">
       <div class="ar-shutter-disc">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8
@@ -603,6 +601,7 @@ model-viewer > [slot="ar-button"] svg {
     </button>
     <span class="ar-shutter-label">Capture</span>
   </div>
+
 </div>
 
 <!-- Full-screen flash for AR capture feedback -->
@@ -704,17 +703,18 @@ function downloadBlob(blob, name) {
 }
 
 /* ══════════════════════════════════════════════════════
-   captureARScreen
-   Capture strategy waterfall:
-   1. model-viewer captureImage() API  (newest @google/model-viewer)
-   2. Shadow DOM WebXR/WebGL canvas    (Chrome WebXR AR)
-   3. Screen Capture API               (Android Chrome / desktop)
-   4. Instruct user for system screenshot (iOS Quick Look / fallback)
+   captureARScreen — grabs 3D model composited over camera
+
+   Strategy waterfall:
+   1. model-viewer .captureImage()         — newest builds
+   2. Shadow DOM canvas (WebXR composited) — Chrome Android WebXR
+   3. All shadow-root canvases scan        — belt-and-suspenders
+   4. System screenshot hint               — iOS / fallback
    ══════════════════════════════════════════════════════ */
 async function captureARScreen(landmarkName) {
   triggerFlash();
 
-  /* 1 — built-in API */
+  /* Strategy 1 — model-viewer built-in API */
   if (activeARViewer && typeof activeARViewer.captureImage === 'function') {
     try {
       const blob = await activeARViewer.captureImage();
@@ -724,69 +724,48 @@ async function captureARScreen(landmarkName) {
     } catch (_) {}
   }
 
-  /* 2 — shadow DOM canvas (model-viewer composites 3D + camera via WebXR) */
+  /* Strategy 2 — grab the composited WebXR canvas from shadow DOM.
+     In WebXR mode model-viewer renders the 3D model blended over the
+     live camera feed onto a single <canvas>. We wait two animation
+     frames to make sure the latest frame is flushed. */
   if (activeARViewer) {
     try {
       const sr = activeARViewer.shadowRoot;
       if (sr) {
-        const canvas =
-          sr.querySelector('canvas[aria-hidden]') ||
-          sr.querySelector('canvas');
+        // Wait for the freshest frame
+        await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
-        if (canvas && canvas.width > 0 && canvas.height > 0) {
-          await new Promise(r => requestAnimationFrame(r));
-          canvas.toBlob(blob => {
-            if (blob && blob.size > 2048) {
-              downloadBlob(blob, landmarkName);
-              showToast('✦ AR photo saved');
-            } else {
-              systemScreenshotHint();
-            }
-          }, 'image/png');
-          return;
+        // Scan ALL canvases — pick the largest one (that's the XR canvas)
+        const canvases = [...sr.querySelectorAll('canvas')];
+        const canvas   = canvases
+          .filter(c => c.width > 0 && c.height > 0)
+          .sort((a, b) => (b.width * b.height) - (a.width * a.height))[0];
+
+        if (canvas) {
+          const blob = await new Promise(res =>
+            canvas.toBlob(b => res(b), 'image/jpeg', 0.95)
+          );
+          if (blob && blob.size > 4096) {
+            downloadBlob(blob, landmarkName);
+            showToast('✦ AR photo saved');
+            return;
+          }
         }
       }
     } catch (_) {}
   }
 
-  /* 3 — Screen Capture API (Android Chrome / desktop) */
-  if (!IS_IOS && navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
-    try {
-      showToast('Select your screen in the prompt…', 4500);
-      const stream = await navigator.mediaDevices.getDisplayMedia({
-        video: { cursor: 'never', displaySurface: 'monitor' },
-      });
-      const track = stream.getVideoTracks()[0];
-      await new Promise(r => setTimeout(r, 180));
-      const ic  = new ImageCapture(track);
-      const bmp = await ic.grabFrame();
-      track.stop();
-      stream.getTracks().forEach(t => t.stop());
-
-      const cvs = document.createElement('canvas');
-      cvs.width  = bmp.width;
-      cvs.height = bmp.height;
-      cvs.getContext('2d').drawImage(bmp, 0, 0);
-      cvs.toBlob(blob => {
-        downloadBlob(blob, landmarkName);
-        showToast('✦ AR photo saved');
-      }, 'image/png');
-      return;
-    } catch (e) {
-      if (e.name !== 'NotAllowedError') console.warn('Screen capture:', e);
-    }
-  }
-
-  /* 4 — system screenshot instructions */
+  /* Strategy 3 — system screenshot instructions (iOS Quick Look, or
+     if WebXR canvas read failed due to security policy) */
   systemScreenshotHint();
 }
 
 function systemScreenshotHint() {
   if (IS_IOS) {
-    showToast('📸 Side button + Volume Up to save', 4500);
-    showHint('Side + Vol Up', 5000);
+    showToast('📸 Side button + Volume Up to capture', 4800);
+    showHint('Side + Vol Up  →  Save Photo', 5500);
   } else if (IS_ANDROID) {
-    showToast('📸 Power + Volume Down to save', 4000);
+    showToast('📸 Power + Volume Down to capture', 4000);
     showHint('Power + Vol Down', 4500);
   } else {
     showToast('📸 Use your screenshot shortcut', 4000);
@@ -803,9 +782,11 @@ LANDMARKS.forEach((lm, idx) => {
   const imgPath  = `${base}.png`;
   const s        = (lm.arScale || 1).toFixed(6);
 
-  const arModes = IS_IOS
-    ? 'quick-look webxr scene-viewer'
-    : 'webxr scene-viewer quick-look';
+  /* Android: webxr ONLY — Scene Viewer is a separate native app that
+     swallows all our HTML UI. WebXR renders inside the browser so our
+     capture overlay button actually appears on screen.
+     iOS: quick-look first (WebXR not supported on iOS Safari). */
+  const arModes = IS_IOS ? 'quick-look' : 'webxr';
 
   const card = document.createElement('div');
   card.className   = 'landmark-card';
