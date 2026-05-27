@@ -175,10 +175,6 @@ model-viewer > [slot="ar-button"] { display: none !important; }
   pointer-events: none;
   transition: all .3s ease;
 }
-  .capture-btn.ar-visible {
-  opacity: 1 !important;
-  pointer-events: auto !important;
-}
 .model-wrap.active .capture-btn { opacity: 1; pointer-events: auto; }
 .capture-btn:active { transform: scale(.92); }
 
@@ -405,7 +401,9 @@ LANDMARKS.forEach((lm, idx) => {
 
   const s = (lm.arScale || 1).toFixed(6);
 
-  const arModes = 'webxr';
+  const arModes = IS_IOS
+    ? 'quick-look webxr scene-viewer'
+    : 'webxr scene-viewer quick-look';
 
   const card = document.createElement('div');
   card.className   = 'landmark-card';
@@ -466,7 +464,6 @@ LANDMARKS.forEach((lm, idx) => {
       </div>
 
       <div class="ar-badge" id="badge-${idx}">✦ AR Ready</div>
-      <button class="capture-btn" id="capture-${idx}">📸</button>
       <div class="pinch-hint">⟺ Pinch to Scale · Drag to Rotate · AR Ready</div>
       <div class="ar-no-support" id="nosup-${idx}">AR not available on this device</div>
     </div>
@@ -497,7 +494,6 @@ LANDMARKS.forEach((lm, idx) => {
   const nosup      = card.querySelector(`#nosup-${idx}`);
   const wrap       = card.querySelector(`#wrap-${idx}`);
   const btn3d      = card.querySelector(`#btn3d-${idx}`);
-  const captureBtn = card.querySelector(`#capture-${idx}`);
   const btnAR      = card.querySelector(`#btnar-${idx}`);
 
   let modelReady = false;
@@ -540,7 +536,20 @@ LANDMARKS.forEach((lm, idx) => {
     btnAR.textContent = '⚠ Unavailable';
   });
 
-  
+  mv.addEventListener('ar-status', e => {
+    const st = e.detail.status;
+    if (st === 'session-started') {
+      mv.style.touchAction = 'none';
+    }
+    if (st === 'failed') {
+      btnAR.disabled = false;
+      btnAR.textContent = '⚠ AR Failed — Retry';
+    }
+    if (st === 'not-presenting') {
+      btnAR.disabled = false;
+      btnAR.textContent = '🪐 View in Real World';
+    }
+  });
 
   wrap.addEventListener('touchstart', e => {
     if (wrap.classList.contains('active') && e.touches.length > 1) {
@@ -568,45 +577,7 @@ LANDMARKS.forEach((lm, idx) => {
     btn3d.textContent = active ? '✕ 2D' : '⬡ 3D';
   });
 
-  captureBtn.addEventListener('click', async () => {
-
-  // Hide buttons temporarily
-  captureBtn.style.display = 'none';
-
-  // Small flash effect
-  const flash = document.createElement('div');
-  flash.style.position = 'fixed';
-  flash.style.inset = '0';
-  flash.style.background = 'white';
-  flash.style.zIndex = '9999';
-  flash.style.opacity = '0.9';
-  flash.style.pointerEvents = 'none';
-  flash.style.transition = 'opacity .4s ease';
-  document.body.appendChild(flash);
-
-  setTimeout(() => {
-    flash.style.opacity = '0';
-  }, 50);
-
-  setTimeout(() => {
-    flash.remove();
-  }, 500);
-
-  // Native screenshot instruction
-  const isiPhone = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-  if (isiPhone) {
-    alert('Press Side Button + Volume Up to capture AR photo');
-  } else {
-    alert('Press Power + Volume Down to capture AR photo');
-  }
-
-  // Show button again
-  setTimeout(() => {
-    captureBtn.style.display = 'flex';
-  }, 1000);
-
-});
+  
 
   btnAR.addEventListener('click', () => {
     if (!modelReady || btnAR.disabled) return;
