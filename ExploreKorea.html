@@ -337,34 +337,6 @@ model-viewer > [slot="ar-button"] { display: none !important; }
   transition: transform .2s, background .2s;
 }
 .dot.active { background: var(--gold2); transform: scale(1.35); }
- #arCaptureGuide{
-  position:fixed;
-  right:18px;
-  bottom:20px;
-  z-index:999;
-
-  border:none;
-  border-radius:40px;
-
-  padding:14px 18px;
-
-  background:rgba(255,255,255,.14);
-
-  backdrop-filter:blur(12px);
-
-  color:white;
-
-  font-size:12px;
-  font-weight:600;
-
-  border:1px solid rgba(255,255,255,.2);
-
-  box-shadow:0 8px 24px rgba(0,0,0,.25);
-}
-
-#arCaptureGuide:active{
-  transform:scale(.96);
-}
 </style>
 </head>
 <body>
@@ -492,6 +464,7 @@ LANDMARKS.forEach((lm, idx) => {
       </div>
 
       <div class="ar-badge" id="badge-${idx}">✦ AR Ready</div>
+      <button class="capture-btn" id="capture-${idx}">📸</button>
       <div class="pinch-hint">⟺ Pinch to Scale · Drag to Rotate · AR Ready</div>
       <div class="ar-no-support" id="nosup-${idx}">AR not available on this device</div>
     </div>
@@ -522,6 +495,7 @@ LANDMARKS.forEach((lm, idx) => {
   const nosup      = card.querySelector(`#nosup-${idx}`);
   const wrap       = card.querySelector(`#wrap-${idx}`);
   const btn3d      = card.querySelector(`#btn3d-${idx}`);
+  const captureBtn = card.querySelector(`#capture-${idx}`);
   const btnAR      = card.querySelector(`#btnar-${idx}`);
 
   let modelReady = false;
@@ -604,23 +578,33 @@ LANDMARKS.forEach((lm, idx) => {
     btn3d.classList.toggle('is-active', active);
     btn3d.textContent = active ? '✕ 2D' : '⬡ 3D';
   });
-btnAR.addEventListener('click', () => {
 
-  if (!modelReady || btnAR.disabled) return;
+  captureBtn.addEventListener('click', async () => {
+    try {
+      const canvas = document.createElement('canvas');
+      const scale  = window.devicePixelRatio || 2;
+      canvas.width  = mv.clientWidth  * scale;
+      canvas.height = mv.clientHeight * scale;
+      const ctx = canvas.getContext('2d');
+      ctx.scale(scale, scale);
+      const internalCanvas = mv.shadowRoot.querySelector('canvas');
+      if (!internalCanvas) { alert('Screenshot not available'); return; }
+      ctx.drawImage(internalCanvas, 0, 0);
+      const link = document.createElement('a');
+      link.download = `${lm.name}-AR.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } catch (err) {
+      console.error(err);
+      alert('Screenshot failed');
+    }
+  });
 
-  if (!mv.canActivateAR) {
-    nosup.style.display = 'block';
-    return;
-  }
-
-
- try {
-  mv.activateAR();
-} catch (e) {
-  console.warn('activateAR error:', e);
-}
-
-});
+  btnAR.addEventListener('click', () => {
+    if (!modelReady || btnAR.disabled) return;
+    if (!mv.canActivateAR) { nosup.style.display = 'block'; return; }
+    try { mv.activateAR(); } catch (e) { console.warn('activateAR error:', e); }
+  });
 });
 
 /* Scroll dots */
@@ -641,27 +625,7 @@ grid.addEventListener('scroll', () => {
     allDots.forEach((d, di) => d.classList.toggle('active', di === best));
   });
 }, { passive: true });
-  document
-.getElementById('arCaptureGuide')
-.addEventListener('click', () => {
-
-  const isiPhone =
-    /iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-  alert(
-
-    isiPhone
-
-    ? 'To capture AR photo:\n\nPress Side Button + Volume Up'
-
-    : 'To capture AR photo:\n\nPress Power + Volume Down'
-
-  );
-
-});
 </script>
-<button id="arCaptureGuide">
-📸 How to Capture AR
-</button>
+
 </body>
 </html>
