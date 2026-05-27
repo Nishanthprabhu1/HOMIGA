@@ -337,6 +337,34 @@ model-viewer > [slot="ar-button"] { display: none !important; }
   transition: transform .2s, background .2s;
 }
 .dot.active { background: var(--gold2); transform: scale(1.35); }
+ #arCaptureGuide{
+  position:fixed;
+  right:18px;
+  bottom:20px;
+  z-index:999;
+
+  border:none;
+  border-radius:40px;
+
+  padding:14px 18px;
+
+  background:rgba(255,255,255,.14);
+
+  backdrop-filter:blur(12px);
+
+  color:white;
+
+  font-size:12px;
+  font-weight:600;
+
+  border:1px solid rgba(255,255,255,.2);
+
+  box-shadow:0 8px 24px rgba(0,0,0,.25);
+}
+
+#arCaptureGuide:active{
+  transform:scale(.96);
+}
 </style>
 </head>
 <body>
@@ -625,7 +653,27 @@ grid.addEventListener('scroll', () => {
     allDots.forEach((d, di) => d.classList.toggle('active', di === best));
   });
 }, { passive: true });
-</script>
+  document
+.getElementById('arCaptureGuide')
+.addEventListener('click', () => {
 
+  const isiPhone =
+    /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+  alert(
+
+    isiPhone
+
+    ? 'To capture AR photo:\n\nPress Side Button + Volume Up'
+
+    : 'To capture AR photo:\n\nPress Power + Volume Down'
+
+  );
+
+});
+</script>
+<button id="arCaptureGuide">
+📸 How to Capture AR
+</button>
 </body>
 </html>
