@@ -581,26 +581,26 @@ const CSV_URL = 'https://docs.google.com/spreadsheets/d/1Xsde5IUtRf4LyZNYOs3lUOr
 const LOCAL_ASSETS = {
   // ── CHANGE SCALE HERE ──────────────────────────────────────────────
   'almondcrustedcrispy': {
-    folder: 'almondcrustedcrispy',
-    file:   'almondcrustedcrispy',
+    folder: 'Almond-Crusted-Crispy',
+    file:   'Almond-Crusted-Crispy',
     scale:  0.25,
     orbit:  '30deg 70deg 110%',
   },
   'cheesyquiche': {
-    folder: 'cheesyquiche',
-    file:   'cheesyquiche',
+    folder: 'Cheesy_quiche',
+    file:   'Cheesy_quiche',
     scale:  2,
     orbit:  '20deg 65deg 110%',
   },
   'crispyvegetable': {
-    folder: 'crispyvegetable',
-    file:   'crispyvegetable',
+    folder: 'Crispy_vegetable',
+    file:   'Crispy_vegetable',
     scale:  1,
     orbit:  '0deg 55deg 105%',
   },
   'mangopetaltower': {
-    folder: 'mangopetaltower',
-    file:   'mangopetaltower',
+    folder: 'Mango-Petal-Tower',
+    file:   'Mango-Petal-Tower',
     scale:  3,
     orbit:  '15deg 65deg 105%',
   },
@@ -700,7 +700,7 @@ function preloadAboveFoldPosters(dishes, count = 4) {
    HELPERS
 ───────────────────────────────────────────── */
 function normalizeKey(str) {
-  return (str||'').toLowerCase().replace(/\s+/g,'-').trim();
+  return (str||'').toLowerCase().replace(/[\s_\-]+/g, '').trim();
 }
 function getLocalAssets(dishName) {
   const key   = normalizeKey(dishName);
