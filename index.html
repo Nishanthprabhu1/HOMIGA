@@ -462,21 +462,28 @@ const LOCAL_ASSETS = {
 };
 
 const EMOJI_MAP = {
-  'pistachio-sauce-bigne-with-ricotta': '🍮',
-  'pinocchio-tiramisu':                  '🍰',
-  'cheesy-green-lasagne':               '🧀',
-  'fried-calamari':                      '🦑'
+  'almondcrustedcrispy': '🍮',
+  'cheesyquiche':        '🍰',
+  'crispyvegetable':     '🧀',
+  'mangopetaltower':     '🦑',
 };
 
-// Fixed Malayalam key text translation mixups
 const I18N = {
-  en: { sub:'Authentic Italian Cuisine',    badge:'Interactive 3D & AR Preview', veg:'veg',        loading:'Loading...',        all:'All', starter:'Starters', 'main-course':'Main Course', dessert:'Desserts' },
-  it: { sub:'Autentica Cucina Italiana',    badge:'Anteprima Interattiva 3D & AR', veg:'vegetariano', loading:'Caricamento...',      all:'Tutti', starter:'Antipasti', 'main-course':'Portata Principale', dessert:'Dolci' },
-  kn: { sub:'ಅಧಿಕೃತ ಇಟಾಲಿಯನ್ ಆಹಾರ',        badge:'3D ಮತ್ತು AR ಮುನ್ನೋಟ',           veg:'ಸಸ್ಯಾಹಾರಿ',   loading:'ಲೋಡ್ ಆಗುತ್ತಿದೆ...', all:'ಎಲ್ಲಾ', starter:'ಸ್ಟಾರ್ಟರ್', 'main-course':'ಮುಖ್ಯ ಕೋರ್ಸ್', dessert:'ಡೆಸರ್ಟ್' },
-  ta: { sub:'உண்மையான இத்தாலிய உணவு',      badge:'3D மற்றும் AR மாதிரிக்காட்சி', veg:'சைவம்',       loading:'ஏற்றப்படுகிறது...', all:'அனைத்தும்', starter:'தொடக்க', 'main-course':'முதன்மை', dessert:'இனிப்பு' },
-  ml: { sub:'ആധികാരിക ഇറ്റാലിയൻ വിഭവങ്ങൾ',badge:'3D & AR പ്രിവ്യൂ',               veg:'വെജ്',         loading:'ലോഡ് ചെയ്യുന്നു...', all:'എല്ലാം', starter:'സ്റ്റാർട്ടർ', 'main-course':'മെയിൻ കോഴ്സ്', dessert:'ഡെസേർട്ട്' },
-  te: { sub:'ప్రామాణిక ఇటాలియన్ వంటకాలు',  badge:'3D & AR ప్రివ్యూ',               veg:'శాఖాహారం',   loading:'లోడ్ అవుతోంది...',   all:'అన్నీ', starter:'స్టార్టర్', 'main-course':'మెయిన్ కోర్స్', dessert:'డెజర్ట్' }
+  en: { sub:'Authentic Italian Cuisine',    badge:'Interactive 3D & AR Preview', veg:'veg',         loading:'Loading...',           all:'All', starter:'Starters', main:'Main Course', dessert:'Desserts' },
+  ko: { sub:'정통 이탈리아 요리',              badge:'인터랙티브 3D & AR 미리보기',     veg:'채식',         loading:'로딩 중...',            all:'전체', starter:'에피타이저', main:'메인 요리', dessert:'디저트' },
+  kn: { sub:'ಅಧಿಕೃತ ಇಟಾಲಿಯನ್ ಆಹಾರ',        badge:'3D ಮತ್ತು AR ಮುನ್ನೋಟ',           veg:'ಸಸ್ಯಾಹಾರಿ',   loading:'ಲೋಡ್ ಆಗುತ್ತಿದೆ...', all:'ಎಲ್ಲಾ', starter:'ಸ್ಟಾರ್ಟರ್', main:'ಮುಖ್ಯ ಕೋರ್ಸ್', dessert:'ಡೆಸರ್ಟ್' },
+  ta: { sub:'உண்மையான இத்தாலிய உணவு',      badge:'3D மற்றும் AR மாதிரிக்காட்சி', veg:'சைவம்',        loading:'ஏற்றப்படுகிறது...', all:'அனைத்தும்', starter:'தொடக்க', main:'முதன்மை', dessert:'இனிப்பு' },
+  ml: { sub:'ആധികാരിക ഇറ്റാലിയൻ വിഭവങ്ങൾ',badge:'3D & AR പ്രിവ്യൂ',              veg:'വെജ്',         loading:'ലോഡ് ചെയ്യുന്നു...', all:'എല്ലാം', starter:'സ്റ്റാർട്ടർ', main:'മെയിൻ', dessert:'ഡെസേർട്ട്' },
+  te: { sub:'ప్రామాణిక ఇటాలియన్ వంటకాలు',  badge:'3D & AR ప్రివ్యూ',              veg:'శాఖాహారం',    loading:'లోడ్ అవుతోంది...',   all:'అన్నీ', starter:'స్టార్టర్', main:'మెయిన్', dessert:'డెజర్ట్' },
 };
+
+const CAT_LABELS = {
+  all:          { en:'All',         it:'Tutti' },
+  starter:      { en:'Starters',    it:'Antipasti' },
+  dessert:      { en:'Desserts',    it:'Dolci' },
+  'main-course':{ en:'Main Course', it:'Portata Principale' },
+};
+
 
 /* ─────────────────────────────────────────────
    SESSION CACHING PROMISE
