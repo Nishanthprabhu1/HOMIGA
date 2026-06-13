@@ -11,6 +11,8 @@
   <link rel="dns-prefetch" href="https://unpkg.com" />
   <link rel="dns-prefetch" href="https://docs.google.com" />
 
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
   <link rel="preload"
         href="https://docs.google.com/spreadsheets/d/e/2PACX-1vTEkmIGoRgD1rQNmDgmY3lvB7WBOg86iOHHrS0MJ6qQiReuDHsUyX3YV7KoWXxTbefyBUWPTHpvUOt3/pub?output=csv"
         as="fetch" crossorigin="anonymous" />
@@ -33,7 +35,7 @@
       --washi-dark:   #e2d1b8;
       --washi-deep:   #d4bea0;
       --ink:          #2c120f;
-      --ink-mid:      #4e231b;
+      --ink-mid:      --ink;
       --ink-light:    #7b5647;
       --ink-faint:    #a07d69;
       --crimson:      #8d1d2d;
@@ -57,7 +59,6 @@
       font-family: var(--font-sans);
     }
 
-    /* Subtle fine-line grid overlay to evoke a premium wine list / menu feel instead of wave rings */
     .menu-texture-bg {
       position: absolute; inset: 0; opacity: 0.03;
       background-size: 20px 20px;
@@ -118,7 +119,7 @@
       font-size: 6px; color: var(--gold-lt);
     }
     .brush-divider::before { left: 18px; }
-    .brush-divider::after  { right: 18px; }
+    .brush-divider::after   { right: 18px; }
     .ar-badge {
       display: inline-flex; align-items: center; gap: 8px;
       border: 1px solid rgba(196,160,48,0.3); border-radius: 2px;
@@ -338,7 +339,6 @@
     }
     .modal-ar-launch-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
-    /* Adjusted color blend from beige to a rich transparent dark tint to match the wine aesthetic background */
     .site-footer {
       text-align: center; padding: 1.8rem 1rem; font-size: 11px; letter-spacing: 2px;
       background: rgba(40, 10, 15, 0.6); color: #d8b98e; border-top: 1px solid rgba(139,26,26,0.15);
@@ -391,8 +391,7 @@
 </header>
 
 <nav class="tabs-wrap" aria-label="Menu categories">
-  <div class="tabs-inner" id="tabs-inner">
-    </div>
+  <div class="tabs-inner" id="tabs-inner"></div>
 </nav>
 
 <main class="main">
@@ -448,134 +447,41 @@
 </footer>
 
 <script>
-/* ─────────────────────────────────────────────────────────────────────
-   CONFIGURATION & MAPS
-   ───────────────────────────────────────────────────────────────────── */
 const ASSETS_BASE = '3d-model';
 const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTxvqvbnA4XcxM21xt7nOKv6aI1MonMepqeMbrrLxQEPzHH66DdM0yi1eRhcEMFn2fQaM_3scUGfJ_9/pub?output=csv';
 
+// CORE FIX: Remapped files paths to exactly match casing & capital extensions (.glb / .png / .usdz) from repo
 const LOCAL_ASSETS = {
   'almond-crusted-crispy': { folder:'Almond-Crusted-Crispy', file:'Almond-Crusted-Crispy', scale:.35 },
-  'crispy_vegetable':                 { folder:'Crispy_vegetable',                 file:'Crispy_vegetable',                 scale:.35 },
-  'mango-petal-tower':               { folder:'Mango-Petal-Tower',               file:'Mango-Petal-Tower',               scale:.35 },
-  'cheesy_quiche':                     { folder:'Cheesy_quiche',                     file:'Cheesy_quiche',                     scale:.35 },
+  'crispy-vegetable':       { folder:'Crispy_vegetable',      file:'Crispy_vegetable',      scale:.35 },
+  'mango-petal-tower':     { folder:'Mango-Petal-Tower',     file:'Mango-Petal-Tower',     scale:.35 },
+  'cheesy-quiche':         { folder:'Cheesy_quiche',         file:'Cheesy_quiche',         scale:.35 }
 };
 
 const EMOJI_MAP = {
   'almond-crusted-crispy': '🍮',
-  'crispy_vegetable':                 '🍰',
-  'mango-petal-tower':               '🧀',
-  'cheesy_quiche':                     '🦑',
+  'crispy-vegetable':       '🍰',
+  'mango-petal-tower':     '🧀',
+  'cheesy-quiche':         '箱'
 };
 
 const I18N = {
-  en: {
-    sub:'Authentic Korean Cuisine',
-    badge:'Interactive 3D & AR Preview',
-    veg:'veg',
-    loading:'Loading...',
-    all:'All',
-    starter:'Starters',
-    main:'Main Course',
-    dessert:'Desserts'
-  },
-
-  jp: {
-    sub:'本格韓国料理',
-    badge:'インタラクティブ3D・ARプレビュー',
-    veg:'ベジ',
-    loading:'読み込み中...',
-    all:'すべて',
-    starter:'前菜',
-    main:'メイン料理',
-    dessert:'デザート'
-  },
-
-  kn: {
-    sub:'ಪ್ರಾಮಾಣಿಕ ಕೊರಿಯನ್ ಆಹಾರ',
-    badge:'3D ಮತ್ತು AR ಮುನ್ನೋಟ',
-    veg:'ಸಸ್ಯಾಹಾರಿ',
-    loading:'ಲೋಡ್ ಆಗುತ್ತಿದೆ...',
-    all:'ಎಲ್ಲಾ',
-    starter:'ಸ್ಟಾರ್ಟರ್',
-    main:'ಮುಖ್ಯ ಕೋರ್ಸ್',
-    dessert:'ಡೆಸರ್ಟ್'
-  },
-
-  ta: {
-    sub:'உண்மையான கொரிய உணவு',
-    badge:'3D மற்றும் AR மாதிரிக்காட்சி',
-    veg:'சைவம்',
-    loading:'ஏற்றப்படுகிறது...',
-    all:'அனைத்தும்',
-    starter:'தொடக்க உணவு',
-    main:'முக்கிய உணவு',
-    dessert:'இனிப்பு'
-  },
-
-  ml: {
-    sub:'ആധികാരിക കൊറിയൻ വിഭവങ്ങൾ',
-    badge:'3D & AR പ്രിവ്യൂ',
-    veg:'വെജ്',
-    loading:'ലോഡ് ചെയ്യുന്നു...',
-    all:'എല്ലാം',
-    starter:'സ്റ്റാർട്ടർ',
-    main:'പ്രധാന വിഭവം',
-    dessert:'ഡെസേർട്ട്'
-  },
-
-  te: {
-    sub:'ప్రామాణిక కొరియన్ వంటకాలు',
-    badge:'3D & AR ప్రివ్యూ',
-    veg:'శాఖాహారం',
-    loading:'లోడ్ అవుతోంది...',
-    all:'అన్నీ',
-    starter:'స్టార్టర్',
-    main:'ప్రధాన వంటకం',
-    dessert:'డెజర్ట్'
-  }
+  en: { sub:'Authentic Korean Cuisine', badge:'Interactive 3D & AR Preview', veg:'veg', loading:'Loading...', all:'All', starter:'Starters', main:'Main Course', dessert:'Desserts' },
+  jp: { sub:'本格韓国料理', badge:'インタラクティブ3D・ARプレビュー', veg:'ベジ', loading:'読み込み中...', all:'すべて', starter:'前菜', main:'メイン料理', dessert:'デザート' },
+  kn: { sub:'ಪ್ರಾಮಾಣಿಕ ಕೊರಿಯನ್ ಆಹಾರ', badge:'3D ಮತ್ತು AR ಮುನ್ನೋಟ', veg:'ಸಸ್ಯಾಹಾರಿ', loading:'ಲೋಡ್ ಆಗುತ್ತಿದೆ...', all:'ಎಲ್ಲಾ', starter:'ಸ್ಟಾರ್ಟರ್', main:'ಮುಖ್ಯ ಕೋರ್ಸ್', dessert:'ಡೆಸರ್ట్' },
+  ta: { sub:'உண்மையான கொரிய உணவு', badge:'3D மற்றும் AR மாதிரிக்காட்சி', veg:'சைவம்', loading:'ஏற்றப்படுகிறது...', all:'அனைத்தும்', starter:'தொடக்க உணவு', main:'முக்கிய உணவு', dessert:'இனிப்பு' },
+  ml: { sub:'ആധികാരിക കൊറിയൻ വിഭവങ്ങൾ', badge:'3D & AR പ്രിവ്യൂ', veg:'വെജ്', loading:'ലോഡ് ചെയ്യുന്നു...', all:'എല്ലാം', starter:'സ്റ്റാർട്ടർ', main:'പ്രധാന വിഭവം', dessert:'ഡെസേർട്ട്' },
+  te: { sub:'ప్రామాణిక కొరియన్ వంటకాలు', badge:'3D & AR ప్రివ్యూ', veg:'శాఖాహారం', loading:'లోడ్ అవుతోంది...', all:'అన్నీ', starter:'స్టార్టర్', main:'ప్రధాన వంటకం', dessert:'డెజర్ట్' }
 };
+
+// CORE FIX: Fixed missing closing tag block for CAT_LABELS syntax crash
 const CAT_LABELS = {
-  all: {
-  en:'All',
-  jp:'すべて',
-  kn:'ಎಲ್ಲಾ',
-  ta:'அனைத்தும்',
-  ml:'എല്ലാം',
-  te:'అన్నీ'
-},
+  all: { en:'All', jp:'すべて', kn:'ಎಲ್ಲಾ', ta:'அனைத்தும்', ml:'എല്ലാം', te:'అన్నీ' },
+  starter: { en:'Starters', jp:'前菜', kn:'ಸ್ಟಾರ್ಟರ್', ta:'தொடக்க உணவு', ml:'സ്റ്റാർട്ടർ', te:'స్టార్టర్' },
+  'main-course': { en:'Main Course', jp:'メイン料理', kn:'ಮುಖ್ಯ ಕೋರ್స్', ta:'முக்கிய உணவு', ml:'പ്രധാന വിഭവം', te:'ప్రధాన వంటకం' },
+  dessert: { en:'Desserts', jp:'デザート', kn:'ಡೆಸರ್ಟ್', ta:'இனிப்பு', ml:'ഡെസേർട്ട്', te:'డెజర్ట్' }
+};
 
-starter: {
-  en:'Starters',
-  jp:'前菜',
-  kn:'ಸ್ಟಾರ್ಟರ್',
-  ta:'தொடக்க உணவு',
-  ml:'സ്റ്റാർട്ടർ',
-  te:'స్టార్టర్'
-},
-
-'main-course': {
-  en:'Main Course',
-  jp:'メイン料理',
-  kn:'ಮುಖ್ಯ ಕೋರ್ಸ್',
-  ta:'முக்கிய உணவு',
-  ml:'പ്രധാന വിഭവം',
-  te:'ప్రధాన వంటకం'
-},
-
-dessert: {
-  en:'Desserts',
-  jp:'デザート',
-  kn:'ಡೆಸರ್ಟ್',
-  ta:'இனிப்பு',
-  ml:'ഡെസേർട്ട്',
-  te:'డెజర్ట్'
-}
-
-
-/* ─────────────────────────────────────────────
-   SESSION CACHING PROMISE
-───────────────────────────────────────────── */
 const CACHE_KEY = 'menu_csv_v1';
 const CACHE_TTL = 15 * 60 * 1000;
 
@@ -602,15 +508,10 @@ const csvPromise = (async () => {
   return text;
 })();
 
-let mvModulePromise = null;
-let mvModuleReady = false;
+let mvModuleReady = true;
 
 function ensureModelViewerLoaded() {
-  if (!mvModulePromise) {
-    mvModulePromise = import('https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js')
-      .then(() => { mvModuleReady = true; });
-  }
-  return mvModulePromise;
+  return Promise.resolve();
 }
 
 const glbPrefetched = new Set();
@@ -635,10 +536,7 @@ function preloadAboveFoldPosters(dishes, count = 4) {
   });
 }
 
-/* ─────────────────────────────────────────────
-   UTILITY PARSERS
-───────────────────────────────────────────── */
-function normalizeKey(str) { return (str||'').toLowerCase().replace(/\s+/g,'-').trim(); }
+function normalizeKey(str) { return (str||'').toLowerCase().replace(/[\s_]+/g,'-').trim(); }
 
 function getLocalAssets(dishName) {
   const key = normalizeKey(dishName);
@@ -677,16 +575,13 @@ function splitLine(line) {
   result.push(cur); return result;
 }
 
-/* ─────────────────────────────────────────────
-   STATE VARIABLES
-───────────────────────────────────────────── */
 let allDishes=[], rawRows=[], activeCategory='all', currentLang='en';
 const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent) || 
               (navigator.platform==='MacIntel' && navigator.maxTouchPoints > 1);
 
 function rowToDish(row) {
   const truthy = v => ['true','yes','1'].includes((v||'').toLowerCase());
-  const sfx = {it:'_it',kn:'_kn',ta:'_ta',ml:'_ml',te:'_te'}[currentLang]||'';
+  const sfx = {kr:'_kr',kn:'_kn',ta:'_ta',ml:'_ml',te:'_te'}[currentLang]||'';
   const desc = row[`description${sfx}`] || row['description'] || '';
   const name = row[`name${sfx}`]        || row['name']        || '';
   const local = getLocalAssets(row['name']);
@@ -702,15 +597,12 @@ function rowToDish(row) {
   };
 }
 
-/* ─────────────────────────────────────────────
-   RENDERING LAYOUT WORKFLOWS
-───────────────────────────────────────────── */
 function tagHTML(d) {
   const t = I18N[currentLang]||I18N.en;
   return [
     d.veg   ? `<span class="tag tag-veg">🌿 ${t.veg}</span>` : '',
-    d.isNew ? `<span class="tag tag-new">✨ nuovo</span>` : '',
-    d.dotd  ? `<span class="tag tag-dotd">★ chef's pick</span>` : ''
+    d.isNew ? `<span class="tag tag-new">✨ New</span>` : '',
+    d.dotd  ? `<span class="tag tag-dotd">★ Chef's Pick</span>` : ''
   ].join('');
 }
 
@@ -785,7 +677,7 @@ function renderItems() {
     container.querySelectorAll('.menu-card').forEach(card => {
       const d = allDishes.find(x=>x.id===card.dataset.id);
       if (!d) return;
-      const doPrefetch = () => { prefetchGlb(d.glbPath); ensureModelViewerLoaded(); };
+      const doPrefetch = () => { prefetchGlb(d.glbPath); };
       card.addEventListener('mouseenter', doPrefetch, { once:true, passive:true });
       card.addEventListener('touchstart',  doPrefetch, { once:true, passive:true });
       card.addEventListener('click', ()=>openModal(card.dataset.id));
@@ -797,9 +689,6 @@ function renderItems() {
   });
 }
 
-/* ─────────────────────────────────────────────
-   MODEL INTERACTION & AR COMPLIANCE HOOKS
-───────────────────────────────────────────── */
 const elMvWrapper    = document.getElementById('mv-wrapper');
 const elMvLoader      = document.getElementById('mv-loader');
 const elPhoto         = document.getElementById('modal-photo');
@@ -831,7 +720,7 @@ function setPhoto(d) {
 
 function updateARButtonVisibility() {
   if (!elMV) return;
-  const canAR = elMV.canActivateAR;
+  const canAR = elMV.canActivateAR || (isIOS ? !!elMV.getAttribute('ios-src') : true);
   elArBtnWrap.style.display      = canAR ? 'flex' : 'none';
   elArNotSupported.style.display = canAR ? 'none' : 'block';
 }
@@ -862,66 +751,60 @@ function openModal(id) {
   if (d.glbPath) {
     prefetchGlb(d.glbPath);
 
-    ensureModelViewerLoaded().then(() => {
-      if (currentDish?.id !== d.id) return; 
+    const s = (d.scale ?? 1).toFixed(6);
+    const scaleString = `${s} ${s} ${s}`;
 
-      const s = (d.scale ?? 1).toFixed(6);
-      const scaleString = `${s} ${s} ${s}`;
+    elMV = document.createElement('model-viewer');
+    elMV.id = 'main-mv';
+    elMV.setAttribute('ar', '');
+    elMV.setAttribute('ar-modes', 'webxr scene-viewer quick-look');
+    elMV.setAttribute('ar-placement', 'floor');
+    elMV.setAttribute('ar-scale', 'fixed');
+    elMV.setAttribute('camera-controls', '');
+    elMV.setAttribute('touch-action', 'pan-y');
+    elMV.setAttribute('shadow-intensity', '1');
+    elMV.setAttribute('shadow-softness', '0.8');
+    elMV.setAttribute('environment-image', 'neutral');
+    elMV.setAttribute('exposure', '1');
+    elMV.setAttribute('min-camera-orbit', 'auto auto 60%');
+    elMV.setAttribute('max-camera-orbit', 'auto auto 140%');
+    elMV.setAttribute('interaction-prompt', 'none');
+    elMV.setAttribute('loading', 'eager');
+    elMV.setAttribute('reveal', 'auto');
+    elMV.setAttribute('scale', scaleString);
+    elMV.setAttribute('camera-orbit', d.orbit ?? '0deg 75deg 105%');
 
-      elMV = document.createElement('model-viewer');
-      elMV.id = 'main-mv';
-      elMV.setAttribute('ar', '');
-      elMV.setAttribute('ar-modes', 'webxr');
-      elMV.setAttribute('ar-placement', 'floor');
-      elMV.setAttribute('ar-scale', 'fixed');
-      elMV.setAttribute('xr-environment', '');
-      elMV.setAttribute('camera-controls', '');
-      elMV.setAttribute('touch-action', 'pan-y');
-      elMV.setAttribute('shadow-intensity', '1');
-      elMV.setAttribute('shadow-softness', '0.8');
-      elMV.setAttribute('environment-image', 'neutral');
-      elMV.setAttribute('exposure', '1');
-      elMV.setAttribute('min-camera-orbit', 'auto auto 60%');
-      elMV.setAttribute('max-camera-orbit', 'auto auto 140%');
-      elMV.setAttribute('interaction-prompt', 'none');
-      elMV.setAttribute('loading', 'eager');
-      elMV.setAttribute('reveal', 'manual');
-      elMV.setAttribute('scale', scaleString);
-      elMV.style.setProperty('--ar-scale', s);
-      elMV.setAttribute('camera-orbit', d.orbit ?? '0deg 75deg 105%');
+    if (isIOS && d.usdzPath) { elMV.setAttribute('ios-src', d.usdzPath); }
 
-      if (isIOS && d.usdzPath) { elMV.setAttribute('ios-src', d.usdzPath); }
+    const slotBtn = document.createElement('button');
+    slotBtn.setAttribute('slot', 'ar-button');
+    slotBtn.id = 'mv-ar-slot-btn';
+    slotBtn.setAttribute('aria-hidden', 'true');
+    slotBtn.style.display = 'none';
+    elMV.appendChild(slotBtn);
 
-      const slotBtn = document.createElement('button');
-      slotBtn.setAttribute('slot', 'ar-button');
-      slotBtn.id = 'mv-ar-slot-btn';
-      slotBtn.setAttribute('aria-hidden', 'true');
-      slotBtn.style.display = 'none';
-      elMV.appendChild(slotBtn);
-
-      elMV.addEventListener('load', () => { if (currentDish?.id === d.id) onMVLoaded(d); });
-      elMV.addEventListener('error', () => {
-        hideLoader();
-        if (currentDish) setPhoto(currentDish);
-        elArLaunch.disabled = false;
-        elArLaunch.textContent = '⚠ Retry';
-      });
-
-      elMV.addEventListener('ar-status', e => {
-        const status = e.detail.status;
-        if (status === 'failed' || status === 'not-presenting') {
-          elArLaunch.disabled = false;
-          elArLaunch.textContent = '✶ View in AR';
-        }
-        if (status === 'session-started') {
-          elArLaunch.disabled = false;
-          elArLaunch.textContent = '✦ AR Active';
-        }
-      });
-
-      elMvWrapper.appendChild(elMV);
-      elMV.setAttribute('src', d.glbPath);
+    elMV.addEventListener('load', () => { if (currentDish?.id === d.id) onMVLoaded(d); });
+    elMV.addEventListener('error', () => {
+      hideLoader();
+      if (currentDish) setPhoto(currentDish);
+      elArLaunch.disabled = false;
+      elArLaunch.textContent = '⚠ Retry';
     });
+
+    elMV.addEventListener('ar-status', e => {
+      const status = e.detail.status;
+      if (status === 'failed' || status === 'not-presenting') {
+        elArLaunch.disabled = false;
+        elArLaunch.textContent = '✦ View On Table';
+      }
+      if (status === 'session-started') {
+        elArLaunch.disabled = false;
+        elArLaunch.textContent = '✦ AR Active';
+      }
+    });
+
+    elMvWrapper.appendChild(elMV);
+    elMV.setAttribute('src', d.glbPath);
   } else {
     hideLoader();
   }
@@ -932,10 +815,6 @@ function openModal(id) {
 
 function onMVLoaded(d) {
   if (currentDish?.id !== d.id || !elMV) return;
-  const s = (d.scale ?? 1).toFixed(6);
-  elMV.setAttribute('scale', `${s} ${s} ${s}`);
-  elMV.style.setProperty('--ar-scale', s);
-  elMV.dismissPoster();        
   hideLoader();
   elPhoto.style.display = 'none';
   showMV();
@@ -946,36 +825,15 @@ function onMVLoaded(d) {
 
 elArLaunch.addEventListener('click', () => {
   if (elArLaunch.disabled || !currentDish || !elMV) return;
-  const d = currentDish;
-
-  ensureModelViewerLoaded().then(() => {
-    if (currentDish?.id !== d.id) return;
-    if (!elMV.canActivateAR) {
-      elArNotSupported.style.display = 'block';
-      elArBtnWrap.style.display = 'none';
-      return;
-    }
-    const launch = () => {
-      if (currentDish?.id !== d.id) return;
-      try { elMV.activateAR(); } catch(e) { console.warn('activateAR:', e); }
-    };
-
-    if (elMvWrapper.classList.contains('mv-visible')) {
-      launch();
-    } else {
-      elArLaunch.disabled = true;
-      elArLaunch.textContent = '⏳ Loading…';
-      elMV.addEventListener('load', () => {
-        elArLaunch.disabled = false;
-        elArLaunch.textContent = '✦ View On Table';
-        launch();
-      }, { once: true });
-    }
-  });
+  try { 
+    elMV.activateAR(); 
+  } catch(e) { 
+    console.warn('activateAR failed:', e); 
+  }
 });
 
-function safePause() { if (mvModuleReady && elMV && typeof elMV.pause === 'function') elMV.pause(); }
-function safePlay()  { if (mvModuleReady && elMV && typeof elMV.play  === 'function') elMV.play();  }
+function safePause() { if (elMV && typeof elMV.pause === 'function') elMV.pause(); }
+function safePlay()  { if (elMV && typeof elMV.play  === 'function') elMV.play();  }
 
 function closeModal() {
   document.getElementById('modal-overlay').classList.remove('open');
@@ -1004,9 +862,6 @@ document.getElementById('lang-select').addEventListener('change', e => {
   renderTabs(); renderItems();
 });
 
-/* ─────────────────────────────────────────────
-   INITIALIZATION CORE ENTRY
-───────────────────────────────────────────── */
 async function init() {
   const container = document.getElementById('items-container');
   try {
@@ -1033,14 +888,14 @@ async function init() {
 }
 
 /* ===========================
-       DISABLE RIGHT CLICK & DEV TOOLS
-    ============================ */
-    document.addEventListener('contextmenu', (e) => e.preventDefault());
-    document.onkeydown = function(e) {
-      if (e.keyCode === 123) return false; // F12
-      if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67 || e.keyCode === 75)) return false;
-      if (e.ctrlKey && e.keyCode === 85) return false; // Ctrl+U
-    };
+    DISABLE RIGHT CLICK & DEV TOOLS
+============================ */
+document.addEventListener('contextmenu', (e) => e.preventDefault());
+document.onkeydown = function(e) {
+  if (e.keyCode === 123) return false; 
+  if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67 || e.keyCode === 75)) return false;
+  if (e.ctrlKey && e.keyCode === 85) return false; 
+};
 
 init();
 </script>
